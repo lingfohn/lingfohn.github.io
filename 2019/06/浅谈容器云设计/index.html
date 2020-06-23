@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>浅谈容器云设计 - Flow</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="子不语" /><meta name="description" content="浅谈容器项目设计 1. 容器项目的三个关键的问题 之前介绍过，我们使用声明式API来对K8s进行管理。所有对K8s内的应用的管理操作本质上都是操作这" /><meta name="keywords" content="gitblog, blog, gitblog.me" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.72.0 with theme even" />
+
+
+<link rel="canonical" href="http://localhost:1313/2019/06/%E6%B5%85%E8%B0%88%E5%AE%B9%E5%99%A8%E4%BA%91%E8%AE%BE%E8%AE%A1/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.78f8f17bab244b9ee62ad16480c9584d5fc2db06ae20681d1ca225cefd80767c.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="浅谈容器云设计" />
+<meta property="og:description" content="浅谈容器项目设计 1. 容器项目的三个关键的问题 之前介绍过，我们使用声明式API来对K8s进行管理。所有对K8s内的应用的管理操作本质上都是操作这" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/2019/06/%E6%B5%85%E8%B0%88%E5%AE%B9%E5%99%A8%E4%BA%91%E8%AE%BE%E8%AE%A1/" />
+<meta property="article:published_time" content="2019-06-04T09:23:29+08:00" />
+<meta property="article:modified_time" content="2019-09-09T09:23:29+08:00" />
+<meta itemprop="name" content="浅谈容器云设计">
+<meta itemprop="description" content="浅谈容器项目设计 1. 容器项目的三个关键的问题 之前介绍过，我们使用声明式API来对K8s进行管理。所有对K8s内的应用的管理操作本质上都是操作这">
+<meta itemprop="datePublished" content="2019-06-04T09:23:29&#43;08:00" />
+<meta itemprop="dateModified" content="2019-09-09T09:23:29&#43;08:00" />
+<meta itemprop="wordCount" content="6451">
+
+
+
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="浅谈容器云设计"/>
+<meta name="twitter:description" content="浅谈容器项目设计 1. 容器项目的三个关键的问题 之前介绍过，我们使用声明式API来对K8s进行管理。所有对K8s内的应用的管理操作本质上都是操作这"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Flow</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">Flow</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">浅谈容器云设计</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-06-04 </span>
+        
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#浅谈容器项目设计">浅谈容器项目设计</a>
+      <ul>
+        <li><a href="#1-容器项目的三个关键的问题">1. 容器项目的三个关键的问题</a></li>
+        <li><a href="#2-该设计的可行性论证">2. 该设计的可行性论证</a></li>
+        <li><a href="#3--容器云设计深入浅出">3.  容器云设计深入浅出</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <h2 id="浅谈容器项目设计">浅谈容器项目设计</h2>
+<h3 id="1-容器项目的三个关键的问题">1. 容器项目的三个关键的问题</h3>
+<p>之前介绍过，我们使用<strong>声明式API</strong>来对K8s进行管理。所有对K8s内的应用的管理操作本质上都是操作这些yaml文件。但是编写并维护这些yaml文件确实是一个很大的挑战。就算是有专人去编写这些yaml文件，后续的维护也是存在巨大的问题。</p>
+<blockquote>
+<p>比如有个需求要升级Tomcat版本，我们需要修改所有应用的yaml文件，把Tomcat镜像修改成新的版本。如果有100个应用，那么就要修改100次，这些操作都是手工操作。</p>
+</blockquote>
+<p>容器云开发最本质的就是能够管理好这些yaml文件。之前也提出过三个关键的问题：**1. 这些yaml文件该由谁去创建？2. 这些yaml文件应该怎么去创建？3. 如果前面两个都没有问题，那么怎么去管理好这些yaml文件？**我们今天就从这三个问题开始，讨论一下容器云的设计。</p>
+<h4 id="11-这些yaml该由谁去创建">1.1 这些yaml该由谁去创建？</h4>
+<p>如果公司要推广容器云，应用的yaml文件肯定不能由开发去编写。编写这些文件需要很高的门槛，需要深入了解k8s、还需要懂架构、懂网络、存储等。符合这些条件的应该是运维人员。而且开发也不关心自己的应用运行在k8s中还是虚拟机中，也很少有开发愿意去学习使用k8s。</p>
+<blockquote>
+<p>我们引进了飞机这种出行方式，我们总不能要求让乘客自己去学习开飞机吧。</p>
+</blockquote>
+<h4 id="12-这些yaml文件应该怎么去创建">1.2 这些yaml文件应该怎么去创建？</h4>
+<p>我们确定要由运维去编写这些yaml文件。但是存在一个问题，我们公司的运维主要负责服务器这个层面，应用的管理本应由<strong>应用运维</strong>这个角色去做，但是我们公司缺少这个角色。就算招一个专人去负责编写这些文件，也存在维护的问题。</p>
+<p>得益于我们公司的标准化工作已经相对完善。公司的应用也无非这几种类型，war包类型、jar包类型、静态类型等。相同类型应用的yaml文件基本都是一致的。我们可以把不变的抽取出来作为<strong>模板</strong>，把应用本身的配置抽取出来作为<strong>配置值</strong>，这些yaml文件可以通过<strong>模板</strong>与<strong>配置值</strong>渲染产生。</p>
+<p>这样运维编写与维护这些yaml文件复杂度就从O(n)降低到O(1)的级别。运维仅需要维护几个模板即可，应用的变更可以通过我们开发的容器云项目的前端页面自助完成。</p>
+<h4 id="13-怎么去管理好这些yaml文件">1.3 怎么去管理好这些yaml文件？</h4>
+<p>管理这些yaml文件的工作其实就是容器云的实现的具体工作。简单来讲，把应用配置与模板信息持久化到数据库中,通过开发WEB页面，让用户可以通过浏览器对配置进行变更，然后后端渲染出yaml文件，调用K8s的接口来对应用进行变更。</p>
+<hr>
+<h3 id="2-该设计的可行性论证">2. 该设计的可行性论证</h3>
+<p>在深入容器云设计之前，我们先思考一下这样的设计能不能满足公司的场景，能不能发挥k8s的全部性能；以及简单介绍一下实现方案，还有容器云的开发原则。</p>
+<h4 id="21-两个问题能不能满足公司的实际场景能不能发挥k8s的全部性能">2.1 两个问题：能不能满足公司的实际场景，能不能发挥K8s的全部性能？</h4>
+<p>K8s是一个经受过大规模作业管理与大的流量考验过的项目，在JD等一些大型互联网公司也有广泛的使用。之前研究过公司的场景，K8s应该完全满足公司的场景。</p>
+<p>所有对K8s的操作都是通过编写yaml文件进行的。我们只是将把yaml的生成过程，由手工编写转变为由配置与模板渲染生成。理论上能够生成任意内容的yaml文件，也就是说，凡是k8s能够做得工作，我们这样方式也能够做。</p>
+<h4 id="22-采用这种方式实现起来最困难的是什么">2.2 采用这种方式实现起来最困难的是什么？</h4>
+<p>最困难的是怎样通过模板与配置值生成这些yaml文件。这需要有一个强大并稳定的引擎来做这些渲染工作。当然有开源的实现&mdash;-<strong>Helm</strong>项目。</p>
+<p><strong>Helm</strong>项目算是半官方的包管理工具，Helm之于K8s如同yum至于linux，在linux中我们可以用一条命令安装mysql数据库:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">yum -y install mysql-server
+</code></pre></div><p>同样我们要在K8s中安装一个mysql，也可以用类似的命令：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">helm install stable/mysql
+</code></pre></div><p>我们的项目就是基于Helm开发，相关的技术可行性验证工作也已经完成。Helm的包称之为Chart，里面的模板是由<code>go template</code>模板语言编写，Helm除使用了<code>go template</code>本身的基本的控制语法（判断、循环等）外，还添加了来自Sprig库50个左右的附加模板函数以及一些其他专用函数。总而言之能够编写任意内容yaml文件、并具备对文件内容做校验的功能。</p>
+<p>更重要的是，所有的开源的chart我们都能够兼容，比如我们容器云想提供mysql服务，我们只需从网上下载mysql的chart，稍作修改就可以导入容器云中，提供mysql数据库的云服务。</p>
+<h4 id="23-容器云开发的原则">2.3 容器云开发的原则</h4>
+<p>顺便提一下，容器云开发的原则，首先要明确开发容器云的目的是为了让K8s在公司落地，而不是为了开发而开发，我们思考的方向是怎样利用好K8s，而不是去再造一套K8s。容器云开发的主要遵循下面几项原则：</p>
+<ul>
+<li>
+<p>基于K8s的提供的接口进行开发，不修改K8s的任何代码，公司容器云随K8s升级而同步升级。</p>
+</li>
+<li>
+<p>基于K8s周边生态进行开发，不重复制造轮子，利用好开源项目，并做合理的二次开发。</p>
+<blockquote>
+<p>比如包管理我们就基于Helm做二次开发，而不会去单独写一套蹩脚的渲染引擎。</p>
+<p>监控就基于Prometheus，在利用好的前提下，集成在容器云中。</p>
+<p>后续版本的服务网格基于lstio，后续有需求可能集成Knative。</p>
+</blockquote>
+</li>
+<li>
+<p>使用K8s鼓励的自定义对象与社区流行的Operator模式进行开发。</p>
+<blockquote>
+<p>当K8s提供的内置对象不满足我们需求的情况下，我们应该创建自定义对象，并编写自定义控制器去拓展k8s的功能，而不应该修改k8s的代码。</p>
+</blockquote>
+<blockquote>
+<p>简单介绍Operator模式，例如Redis等有状态的应用，其工作并不仅仅是起一个对象，销毁一个对象这么简单，其中可能包含很多复杂的逻辑，比如说处理主从、异地备份、从备份恢复等维护工作，这些之前都是由手工去处理，在K8s里，这些工作都可以用编程的方式自动化去完成，实现真正意义上的自动化运维。</p>
+</blockquote>
+</li>
+<li>
+<p>去实现K8s所定义的接口，比如CSI、CNI等。</p>
+</li>
+</ul>
+<hr>
+<h3 id="3--容器云设计深入浅出">3.  容器云设计深入浅出</h3>
+<p>首先我们要对容器云有一个定位，<strong>容器云的主要定位是应用的运行平台，并提供一些公共软件的服务</strong>。一切操作都是围绕这<strong>应用</strong>这个核心概念，容器云的核心就是管理应用与应用的生命周期（创建——&gt;变更——&gt;销毁）。而在K8s中，一切操作都是通过yaml文件，前面我也长篇幅介绍了yaml文件的生成方式，通过应用的配置与模板渲染而来。而配置与模板信息肯定要存到数据库中。接下来我们就配置与模板这两个对象展开，一步步地设给出容器云ER图。</p>
+<h4 id="31-从最核心的两个对象应用与类型开始">3.1 从最核心的两个对象应用与类型开始</h4>
+<p>我们用<code>应用表</code>存储应用的配置，用<code>类型表</code>存储模板信息。其ER图如下。</p>
+<p>![](<a href="https://gitblog-me.oss-cn-hangzhou.aliyuncs.com/">https://gitblog-me.oss-cn-hangzhou.aliyuncs.com/</a>屏幕快照 2019-05-31 下午5.06.45.png)</p>
+<p>这两个应该是容器云里最核心的对象了。应用生命周期内的所有操作都可以转换成对这两个表数据的操作。</p>
+<p>下面我们描述一下，创建一个类型为war的应用地具体过程。</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">1. 用户通过前端页面填写表单，选择类型为war包类型，填写应用名、副本数等配置信息。
+2. 容器云后端程序接收到请求，在应用表中添加一条记录，存储着应用的配置。
+3. 容器云渲染引擎通过应用的模板与配置生成yaml文件。
+4. 容器云调用K8s接口，传递刚生成的yaml文件，创建应用实例。
+</code></pre></div><p>应用变更的流程，例如应用扩容两个节点：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">1. 用户通过前端页面，修改应用的配置，将节点数+2。
+2. 容器云后端程序将配置信息更新到数据库中。
+3. 容器云渲染引擎通过模板与配置信息生成新的yaml文件。
+4. 容器云调用K8s接口，传递上面新的yaml文件，更新应用实例状态。
+</code></pre></div><p>应用下线的流程，进行资源回收工作：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">1. 用户在前端页面点击删除应用按钮。
+2. 容器云渲染引擎通过模板与配置信息生成yaml文件。
+3. 容器云调用k8s接口，传递上面的yaml文件，删除应用实例。
+4. 容器云后端程序删除应用表中相应记录。
+</code></pre></div><p>如果我们想提供redis服务，大致流程是。</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">1. 运维编写redis类型的应用的模板，并上传到容器云中。
+2. 通过容器云页面，录入redis类型信息，即在类型表中新增一条数据。
+3. 用户在创建应用时，就可以选择创建redis类型的应用了。
+</code></pre></div><p><strong>总结一下</strong></p>
+<ol>
+<li>创建应用的本质就是向<code>应用表</code>中新增一条记录。</li>
+<li>变更应用的本质就是修改<code>应用表</code>中相关的记录。</li>
+<li>下线应用的本质就把<code>应用表</code>中相关的记录删除。</li>
+</ol>
+<p>可以看出，容器云项目无非就是对这两个表的CRUD操作。但是实现过程中可能会遇到很多细节问题，比如说：</p>
+<blockquote>
+<p>把所有的应用都存在一个应用表中，但不同类型的应用的配置也不同，应该怎样设计表结构？</p>
+</blockquote>
+<p>如果容器云项目使用了关系型数据库（如mysql），那么可以将应用的配置字段定义为json类型。<code>应用表</code>示例：</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>应用名</th>
+<th>应用类型</th>
+<th>配置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>ymsWeb</td>
+<td>war</td>
+<td>{&ldquo;replica&rdquo;: 1,&ldquo;image&rdquo;: &ldquo;harbor.tf56.lo/ymsWeb:v1.20.4&rdquo;}</td>
+</tr>
+<tr>
+<td>2</td>
+<td>ymsWeb-redis</td>
+<td>redis</td>
+<td>{&ldquo;username&rdquo;:&ldquo;xxx&rdquo;,&ldquo;password&rdquo;:&ldquo;xxx&rdquo;}</td>
+</tr>
+<tr>
+<td>3</td>
+<td>walrusApi</td>
+<td>war</td>
+<td>{&ldquo;replica&rdquo;: 2,&ldquo;image&rdquo;: &ldquo;harbor.tf56.lo/walrusApi:v2.0.0&rdquo;}</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>假如容器云中已经运行了100个war类型的应用，现在有一个需求需要修改模板才能完成，但是修改公共war模板会影响到其它应用，应该怎样处理这种问题？</p>
+</blockquote>
+<p>应用架构肯定会升级与变更，对应着模板文件也要跟我们所写程序一样，要有一个版本的概念。凡是导入到容器云中并被应用引用的模板，不应该有丝毫变化。如果有一些需要修改模板才能满足的变更需求，我们应该在之前模板的基础上，重新创建一个新的版本的模板文件。再把那些应用的模板指向新的版本即可。<code>类型表</code>示例：</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>类型名</th>
+<th>版本</th>
+<th>模板文件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>war</td>
+<td>V1.1.0</td>
+<td>/path/to/file/war-v1.1.0.tar.gz</td>
+</tr>
+<tr>
+<td>2</td>
+<td>redis</td>
+<td>V1.0.0</td>
+<td>/path/to/file/redis-v1.0.0.tar.gz</td>
+</tr>
+<tr>
+<td>3</td>
+<td>war</td>
+<td>V1.2.0</td>
+<td>/path/to/file/war-v1.2.0.tar.gz</td>
+</tr>
+</tbody>
+</table>
+<p>如上表所示，有两个版本的war类型模板，老的应用还是依赖v1.1.0的版本，部分应用已升级到新的v1.2.0的模板。值得注意的是，高版本的模板应该尽量做到向下兼容，以实现平滑过度与回滚的目的。</p>
+<p>应用与类型这两个对象的具体的细节我们暂时不去深入思考，在详细设计阶段，我们会讨论到各个实现细节问题，我们接着进入下一个小节。</p>
+<h4 id="32-应用依赖关系及管理的粒度">3.2 应用依赖关系及管理的粒度</h4>
+<p>我们看上面应用表里面的ymsWeb与ymsWeb-redis。从应用名就能看出来它们之间的关系，ymsWeb依赖于ymsWeb-redis。他们在资源权限分配或生命周期管理等应该是一致的。</p>
+<blockquote>
+<p>例如ymsWeb要下线，相应的ymsWeb-redis资源也要相应地回收。</p>
+<p>把ymsWeb分配给一个用户，ymsWeb-redis也需要同时分配。</p>
+</blockquote>
+<p>我们新增<code>项目</code>这个对象，来维护他们之间的关系，关系密切的应用属于相同的<code>项目</code>，在之后的实现中，相同项目的应用会在同一视图里面展示，其ER图如下。</p>
+<p>![](<a href="https://gitblog-me.oss-cn-hangzhou.aliyuncs.com/">https://gitblog-me.oss-cn-hangzhou.aliyuncs.com/</a>屏幕快照 2019-06-02 下午2.25.47.png)</p>
+<blockquote>
+<p>例如treasureWeb、treasureApi、treasure、treasureRainbowApi、treasureCommon、treasureRainbow这几个应用应该归属与相同的项目treasure。</p>
+</blockquote>
+<p>项目这个概念是后面资源管理的最小单位，在k8s中项目对应着namespace这个概念。</p>
+<h4 id="33--如何解决公司多环境的问题">3.3  如何解决公司多环境的问题</h4>
+<p>公司现在有开发、测试、预防、生产、灾备等多个运行环境。容器云首先要支持多环境；还要解决容器云里的应用与现有环境互通的问题。</p>
+<blockquote>
+<p>容器云内的应用应该直接访问当前运行在虚拟机内的应用，当前运作在虚拟机中的应用也应该访问到运行在容器云里面的应用。</p>
+</blockquote>
+<p>一般公司的常见的解决方案是，会搭建两套环境，开发、测试、预发等共用一套K8s；生产、灾备使用一套K8s。这两套K8s存在物理网络的隔离。同一套K8s内部，使用K8s的标签机制与namespace来区分不同环境。</p>
+<p>但是我们公司不太好借鉴这种方案，因为存在如下几个问题：</p>
+<ol>
+<li>公司大量使用短域名与vip的方式配置应用，而且不同环境内的短域名相同，但是解析出来的ip地址不同。</li>
+<li>各个环境之间存在物理网络上的隔离，并且配置着单独的DNS解析服务器。</li>
+</ol>
+<p>为了解决这个问题，我们采用简单粗暴的方式：**公司有几套环境，我们就在相应的网段中搭建几套k8s集群。**这样虚拟机能够直接访问k8s的Pod，同样k8s中的Pod也能够直接访问虚拟机、短域名、vip等。多个环境中的K8s由容器云平台统一管理。示例图如下：
+<img src="https://gitblog-me.oss-cn-hangzhou.aliyuncs.com/20190603090247.png" alt=""></p>
+<p>相应的，要增加<code>环境表</code>，环境与应用之间的关系是一对多关系，应用只属于一个环境，一个环境中运作着多个应用，ER图如下：</p>
+<p>![](<a href="https://gitblog-me.oss-cn-hangzhou.aliyuncs.com/">https://gitblog-me.oss-cn-hangzhou.aliyuncs.com/</a>屏幕快照 2019-06-03 上午9.05.55.png)</p>
+<h4 id="34-用户鉴权与资源控制">3.4 用户鉴权与资源控制</h4>
+<p>容器云基本上就是围绕着<code>应用</code>、<code>类型</code>、<code>项目</code>、<code>环境</code>这四个对象进行开发，接下来的工作就是用户鉴权与权限控制方面，拥有这些功能，容器云项目基本上就能达到可用的级别，可以发布1.0版本。</p>
+<p>用户的认证，我们接入公司的单点登录系统，这里我们不做深入的讨论。资源控制与操作权限控制我们自己实现。首先讨论的是资源访问控制。</p>
+<p>资源访问控制是指，哪些用户能够访问那些资源。在容器云里面，只有一种资源需要控制，那就是<code>项目</code>资源，所以ER图设计如下：</p>
+<p>![](<a href="https://gitblog-me.oss-cn-hangzhou.aliyuncs.com/">https://gitblog-me.oss-cn-hangzhou.aliyuncs.com/</a>屏幕快照 2019-06-03 下午2.28.16.png)</p>
+<p>用户与资源存在多对多的关系，可以给一个用户分配多个项目，同一个项目也可以分配给多个用户。</p>
+<p>这样简单的设计基本上可以达到资源控制的目的。这样用户在访问项目列表的时候，就只能看到分配给自己的项目，避免了用户对别人的项目误操作的问题。但是这样设计会存在一些问题。</p>
+<p>首先我们要思考一个问题，<strong>给用户分配项目这个操作是由谁去操作？</strong></p>
+<p>很多公司有专门的配置管理员去做这份工作，我们公司可能有一个管理员的角色去做这份工作。这些关系的维护会有很大的挑战，并且随着时间的流逝，这些信息的准确性就会出现问题。</p>
+<blockquote>
+<p>例如从Tone中查询应用Owner信息，发现Owner已经离职半年多了。</p>
+<p>例如人员调整，不再开发某些项目的，但是换项目组后还是会看到之前的项目。相关的资源权限没有回收。</p>
+<p>人员入职还需要提出一些资源的访问申请，还需要走繁琐的流程。</p>
+</blockquote>
+<p>这些问题出现的根本原因是在于，用户与项目直接的关系并不是稳固的。我们无法避免人员的流动与架构的调整。</p>
+<p>但是我们可以在设计的阶段避免这种问题。新的ER图如下：</p>
+<p>![](<a href="https://gitblog-me.oss-cn-hangzhou.aliyuncs.com/">https://gitblog-me.oss-cn-hangzhou.aliyuncs.com/</a>屏幕快照 2019-06-03 下午3.03.17.png)</p>
+<p>我们新增一个团队的概念，将用户与项目解耦，一个项目属于一个的团队。一个团队会存在多个项目。项目与团队之间的关系基本上不会变化。</p>
+<blockquote>
+<p>铁打的营盘流水的兵，团队就是铁打的营盘，用户就是流水的兵。</p>
+</blockquote>
+<p>用户入职我们就加入到某个团队中即可，用户不再负责这些项目或者离职就把他从团队中除名。团队中存在多个角色（开发、测试、运维、架构师、管理员等），这些用户管理的工作，就交给各个团队的管理员去负责。这样基本上能够保证数据的准确性。</p>
+<h4 id="35-用rbac去做操作权限控制">3.5 用RBAC去做操作权限控制</h4>
+<p>上面基本上对资源访问做了控制，但是现在还存在的一个问题是，现在系统里面的用户拥有所有操作的权限。这显然不是我们想要的，我们想让不同角色的人拥有不同的权限，例如我们不想让开发自己去扩容集群，只有管理员才能管理用户等。接下来的工作就是操作权限的设计。</p>
+<p>权限控制，我们采用最简单的RBAC去做，ER图如下：</p>
+<p>![](<a href="https://gitblog-me.oss-cn-hangzhou.aliyuncs.com/">https://gitblog-me.oss-cn-hangzhou.aliyuncs.com/</a>屏幕快照 2019-06-03 下午3.57.01.png)</p>
+<p>RBAC基本上是业界最简单的权限控制方案。由于权限控制是放在某个切面实现，后续也如果有需求要替换，我们也能很方便的做到，细节暂时就不深入讨论了。</p>
+<p>我们公司还有一个需求是，开发只能访问到开发与测试环境，而运维能够访问到所有的环境，我们稍微调整ER图，来满足这个需求。完整的ER图如下：</p>
+<p>![](<a href="https://gitblog-me.oss-cn-hangzhou.aliyuncs.com/">https://gitblog-me.oss-cn-hangzhou.aliyuncs.com/</a>屏幕快照 2019-06-03 下午4.00.44.png)</p>
+<p>以上就是容器云1.0版本的简要设计。围绕这应用这个概念，核心定位是应用的运行平台，关注的是应用的管理与应用生命周期管理，加上基本的资源控制与权限控制。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">子不语</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-09-09
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/2019/08/hugo%E4%B8%BB%E9%A2%98even%E6%96%87%E7%AB%A0%E6%A0%B7%E5%BC%8F%E9%A2%84%E8%A7%88/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Hugo主题even文章样式预览</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/2019/04/%E6%84%9F%E6%80%A7%E8%AE%A4%E8%AF%86kubernetes/">
+            <span class="next-text nav-default">感性认识Kubernetes</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:hi@gitblog.me" class="iconfont icon-email" title="email"></a>
+  <a href="http://localhost:1313/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">子不语</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.d7b7ada643c9c1a983026e177f141f7363b4640d619caf01d8831a6718cd44ea.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Restful API 接口设计规范 - Flow</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="子不语" /><meta name="description" content="基础 API版本符合语义化版本控制 版本格式：主版本号.次版本号.修订号，版本号递增规则如下： 主版本号：当你做了不兼容的 API 修改， 次版本号：当你做" /><meta name="keywords" content="gitblog, blog, gitblog.me" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.72.0 with theme even" />
+
+
+<link rel="canonical" href="http://localhost:1313/2018/05/restful-api-%E6%8E%A5%E5%8F%A3%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.78f8f17bab244b9ee62ad16480c9584d5fc2db06ae20681d1ca225cefd80767c.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="Restful API 接口设计规范" />
+<meta property="og:description" content="基础 API版本符合语义化版本控制 版本格式：主版本号.次版本号.修订号，版本号递增规则如下： 主版本号：当你做了不兼容的 API 修改， 次版本号：当你做" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/2018/05/restful-api-%E6%8E%A5%E5%8F%A3%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83/" />
+<meta property="article:published_time" content="2018-05-07T17:06:58+08:00" />
+<meta property="article:modified_time" content="2019-09-05T16:59:26+08:00" />
+<meta itemprop="name" content="Restful API 接口设计规范">
+<meta itemprop="description" content="基础 API版本符合语义化版本控制 版本格式：主版本号.次版本号.修订号，版本号递增规则如下： 主版本号：当你做了不兼容的 API 修改， 次版本号：当你做">
+<meta itemprop="datePublished" content="2018-05-07T17:06:58&#43;08:00" />
+<meta itemprop="dateModified" content="2019-09-05T16:59:26&#43;08:00" />
+<meta itemprop="wordCount" content="2666">
+
+
+
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Restful API 接口设计规范"/>
+<meta name="twitter:description" content="基础 API版本符合语义化版本控制 版本格式：主版本号.次版本号.修订号，版本号递增规则如下： 主版本号：当你做了不兼容的 API 修改， 次版本号：当你做"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Flow</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">Flow</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Restful API 接口设计规范</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-05-07 </span>
+        
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <h4 id="基础">基础</h4>
+<h5 id="api版本符合语义化版本httpssemverorglangzh-cn控制">API版本符合<a href="https://semver.org/lang/zh-CN/">语义化版本</a>控制</h5>
+<p>版本格式：主版本号.次版本号.修订号，版本号递增规则如下：</p>
+<ol>
+<li><strong>主版本号：当你做了不兼容的 API 修改，</strong></li>
+<li><strong>次版本号：当你做了向下兼容的功能性新增，</strong></li>
+<li><strong>修订号：当你做了向下兼容的 bug 修复。</strong></li>
+</ol>
+<p>其他标签，如预发版本、构建元信息，可以拓展到“主版本号.次版本号.修订号”的后面。</p>
+<h5 id="强制在路径中使用主版本号">强制在路径中使用主版本号</h5>
+<p>制定版本并在版本之间平缓过渡对于设计和维护一套API是个巨大的挑战。所以，最好在设计之初就使用一些方法来预防可能会遇到的问题。</p>
+<p>为了避免API的变动导致用户使用中产生意外结果或调用失败，最好强制要求所有访问都需要指定版本号。请避免提供默认版本号，一旦提供，日后想要修改它会相当困难。</p>
+<p>虽然可将版本号信息放置在头信息(HTTP Headers)中，譬如在<code>Accept</code>段中标明版本信息。例如:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Accept: application/json; version=3
+</code></pre></div><p>但是在路径中标识版本信息将更加直观；并且若系统同时提供多个版本的服务，各个版本之间将不受影响。例如：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">get /v1/cmdb/clusters
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">get /v2/cmdb/clusters
+</code></pre></div><p>新老版本可以共同存在，新版本将慢慢替换老版本。</p>
+<h5 id="使用自定义-header指明api的具体版本">使用自定义 Header指明api的具体版本</h5>
+<p>虽然要求同一主版本的api需要向下兼容，但是指明具体的api版本能方便消费者调试与查阅文档</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"> X-Api-Version: v1.2.0
+</code></pre></div><h5 id="uri失效">URI失效</h5>
+<p>随着系统发展，总有一些API失效或者迁移，对失效的API，返回404 not found 或 410 gone；对迁移的API，返回 301 重定向。</p>
+<h5 id="为内省而提供-request-id">为内省而提供 Request-Id</h5>
+<p>为每一个请求响应包含一个<code>Request-Id</code>头，并使用UUID作为该值。通过在客户端、服务器或任何支持服务上记录该值，它能为我们提供一种机制来跟踪、诊断和调试请求。</p>
+<h5 id="提供人类可读的文档">提供人类可读的文档</h5>
+<p>提供人类可读的文档让客户端开发人员可以理解你的API。使用swagger生成人类可读的api文档。</p>
+<h4 id="请求requests">请求（Requests）</h4>
+<h5 id="资源名为复数形式">资源名为复数形式</h5>
+<p>使用复数形式为资源命名，除非这个资源在系统中是单例的 (例如，在大多数系统中，给定的用户帐户只有一个)。 这种方式保持了特定资源的统一性。</p>
+<p>例如：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">/openstack-api/v1/servers
+</code></pre></div><h5 id="路径要小写">路径要小写</h5>
+<p>为了和域名命名规则保持一致，使用小写字母并用<code>-</code>分割路径名字，例如：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">/openstack-api/v1/servers
+</code></pre></div><h5 id="资源集合与单个资源">资源集合与单个资源</h5>
+<p>资源集合：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">/openstack-api/v1/regions 
+/openstack-api/v1/regions/1/servers 
+</code></pre></div><p>单个资源：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">/openstack-api/v1/servers/1 
+/openstack-api/v1/servers/1,2,3 
+</code></pre></div><h5 id="最小化路径嵌套">最小化路径嵌套</h5>
+<p>在一些有父路径/子路径嵌套关系的资源数据模块中，路径可能有非常深的嵌套关系，例如:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">/regions/{region_id}/connections/{connection_id}/servers/{server_id}
+</code></pre></div><p>推荐在根(root)路径下指定资源来限制路径的嵌套深度。使用嵌套指定范围的资源。在上述例子中，servers属于connections，connections属于regions可以表示为：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">/regions/{region_id}
+/regions/{region_id}/connections
+/connections/{connection_id}
+/connections/{connection_id}/servers
+/servers/{server_id}
+</code></pre></div><h5 id="通过标准http方法对资源crud">通过标准HTTP方法对资源CRUD</h5>
+<p><strong>GET</strong>: 查询</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">GET /servers
+GET /servers/1
+GET /servers/1/volumns
+</code></pre></div><p><strong>POST</strong>: 创建单个资源。POST一般向“资源集合”型URI发起；</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">POST /servers 
+POST /regions/1/servers
+</code></pre></div><p><strong>PUT</strong>：更新单个资源（全量），客户端提供完整的更新后的资源。与之对应的是 PATCH，PATCH 负责部分更新，客户端提供要更新的那些字段。PUT/PATCH一般向“单个资源”型uri发起</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">PUT /servers/1
+PUT /regions/1
+</code></pre></div><p><strong>DELETE</strong>：删除</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">DELETE /regions/1/servers/2
+DELETE /servers/1,2,3
+</code></pre></div><p><strong>ACTIONS</strong>: 指定行为</p>
+<p>特殊情况下，需要为某些资源指定行为。为了描述清楚，在行为前加上一个标准的<code>actions</code>：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">/resources/{resource_id}/actions/:action
+</code></pre></div><p>例如：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">/servers/1/actions/stop   //停止id为1的云主机
+</code></pre></div><h5 id="安全性与幂等性">安全性与幂等性</h5>
+<p>安全性：不会改变资源状态，可以理解为只读的；
+幂等性：执行1次和执行N次，对资源状态改变的效果是等价的。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>安全性</th>
+<th>幂等性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td>是</td>
+<td>是</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>否</td>
+<td>否</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td>否</td>
+<td>是</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>否</td>
+<td>是</td>
+</tr>
+</tbody>
+</table>
+<p>安全性和幂等性均不保证反复请求能拿到相同的response。以 DELETE 为例，第一次DELETE返回200表示删除成功，第二次返回404提示资源不存在，这是允许的。</p>
+<h5 id="复杂查询">复杂查询</h5>
+<p>查询可以捎带以下参数：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>示例</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>过滤条件</td>
+<td>?type=1&amp;age=16</td>
+<td>允许一定的ur冗余，如/zoos/1 与 /zoos?id=1</td>
+</tr>
+<tr>
+<td>排序</td>
+<td>?ordering=age</td>
+<td>使用ordering标识需要排序的字段</td>
+</tr>
+<tr>
+<td>分页</td>
+<td>?page=1&amp;page_size=10</td>
+<td>page 为页数，page_size 为页面大小</td>
+</tr>
+<tr>
+<td>搜索</td>
+<td>?search=abc</td>
+<td>search标识需要搜索的关键字</td>
+</tr>
+</tbody>
+</table>
+<h5 id="在请求的body体使用json格式数据">在请求的body体使用JSON格式数据</h5>
+<p>在<code>PUT</code>/<code>PATCH</code>/<code>POST</code>请求的正文（request bodies）中使用JSON格式数据，而不是使用 form 表单形式的数据。这与我们使用JSON格式返回请求相对应，例如:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$ curl -X POST https://service.com/apps \
+    -H &#34;Content-Type: application/json&#34; \
+    -d &#39;{&#34;name&#34;: &#34;demoapp&#34;}&#39;
+
+{
+  &#34;id&#34;: &#34;01234567-89ab-cdef-0123-456789abcdef&#34;,
+  &#34;name&#34;: &#34;demoapp&#34;,
+  &#34;owner&#34;: {
+    &#34;email&#34;: &#34;username@example.com&#34;,
+    &#34;id&#34;: &#34;01234567-89ab-cdef-0123-456789abcdef&#34;
+  },
+  ...
+}
+</code></pre></div><hr>
+<h4 id="响应response">响应(Response)</h4>
+<h5 id="返回合适的状态码">返回合适的状态码</h5>
+<p>为每一次的响应返回合适的HTTP状态码。 好的响应应该使用如下的状态码:</p>
+<table>
+<thead>
+<tr>
+<th>状态码</th>
+<th>状态</th>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>OK</td>
+<td>GET</td>
+<td>客户端向服务器请求数据，服务器成功找到它们</td>
+</tr>
+<tr>
+<td>201</td>
+<td>CREATED</td>
+<td>POST/PUT</td>
+<td>客户端向服务器提供数据，服务器根据要求创建了一个资源</td>
+</tr>
+<tr>
+<td>204</td>
+<td>NO CONTENT</td>
+<td>DELETE</td>
+<td>客户端要求服务器删除一个资源，服务器删除成功</td>
+</tr>
+<tr>
+<td>400</td>
+<td>INVALID REQUEST</td>
+<td>POST/PUT</td>
+<td>客户端向服务器提供了不正确的数据，服务器什么也没做</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+<td>*</td>
+<td>客户端未通过HTTP认证。（token失效，或者用户提供的认证信息有误）</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+<td>*</td>
+<td>客户端访问了未授权的资源，权限未通过。</td>
+</tr>
+<tr>
+<td>404</td>
+<td>NOT FOUND</td>
+<td>*</td>
+<td>客户端引用了一个不存在的资源或集合，服务器什么也没做</td>
+</tr>
+<tr>
+<td>*406</td>
+<td>Not Acceptable</td>
+<td>GET</td>
+<td>用户请求的格式不可得（比如用户请求JSON格式，但是只有XML格式）</td>
+</tr>
+<tr>
+<td>*410</td>
+<td>Gone</td>
+<td>GET</td>
+<td>用户请求的资源被永久删除，且不会再得到的。</td>
+</tr>
+<tr>
+<td>*422</td>
+<td>Unprocesable entity</td>
+<td>POST/PUT</td>
+<td>当创建一个对象时，发生一个验证错误。</td>
+</tr>
+<tr>
+<td>500</td>
+<td>INTERNAL SERVER ERROR</td>
+<td>*</td>
+<td>服务器发生内部错误，客户端无法得知结果，即便请求已经处理成功</td>
+</tr>
+<tr>
+<td>*503</td>
+<td>Internal Server Error</td>
+<td>*</td>
+<td>服务器暂时处于超负荷或正在进行停机维护，现在无法处理请求。</td>
+</tr>
+</tbody>
+</table>
+<h5 id="提供全部可用的资源">提供全部可用的资源</h5>
+<p>提供全部可显现的资源表述 (例如： 这个对象的所有属性) ，当响应码为200或是201时返回所有可用资源，包含<code>PUT</code>/<code>PATCH</code>和<code>DELETE</code>请求，例如:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">{
+    &#34;id&#34;: 0,
+    &#34;created_time&#34;: &#34;2018-05-08T02:21:03Z&#34;,
+    &#34;region_id&#34;: &#34;string&#34;,
+    &#34;region_name&#34;: &#34;string&#34;,
+    &#34;updated_time&#34;: &#34;2018-05-08T02:21:03Z&#34;
+}
+</code></pre></div><h5 id="分页响应格式">分页响应格式</h5>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">{
+  	&#34;pagination&#34;: {
+    	&#34;page&#34;: 0,
+    	&#34;page_size&#34;: 0,
+    	&#34;total&#34;: 0
+  	},
+ 	&#34;results&#34;: [
+ 		{...},
+ 		{...}
+ 		]
+}
+</code></pre></div><h5 id="提供标准的时间戳">提供标准的时间戳</h5>
+<p>为资源提供默认的创建时间<code>created_time</code>和更新时间<code>updated_time</code>，例如:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">{
+    &#34;id&#34;: 0,
+    &#34;region_id&#34;: &#34;string&#34;,
+    &#34;region_name&#34;: &#34;string&#34;,
+    &#34;created_time&#34;: &#34;2018-05-08T02:21:03Z&#34;,
+    &#34;updated_time&#34;: &#34;2018-05-08T02:21:03Z&#34;
+}
+</code></pre></div><h5 id="使用utc时间">使用UTC时间</h5>
+<p>仅接受和返回UTC格式的时间。<code>ISO8601</code>格式的数据，例如:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">{
+    &#34;created_time&#34;: &#34;2018-05-08T02:21:03Z&#34;
+}
+</code></pre></div><h5 id="嵌套外键关系">嵌套外键关系</h5>
+<p>使用嵌套对象序列化外键关联，例如:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">{
+  &#34;name&#34;: &#34;service-production&#34;,
+  &#34;owner&#34;: {
+    &#34;id&#34;: &#34;5d8201b0...&#34;
+  },
+  // ...
+}
+</code></pre></div><h5 id="错误处理">错误处理</h5>
+<ul>
+<li>
+<p>不要发生了错误但给2xx响应，客户端可能会缓存成功的http请求；</p>
+</li>
+<li>
+<p>正确设置http状态码，不要自定义；</p>
+</li>
+<li>
+<p>Response body 使用统一的错误格式</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">{
+&#34;code&#34;: &#34;string&#34;,
+&#34;message&#34;: &#34;string&#34;,
+&#34;errors&#34;: []
+}
+</code></pre></div><p><code>code</code> 使用类型的编码，不要使用数字类型，用于错误定位与前端判断逻辑。</p>
+<p><code>message</code> 用于提示，简短的错误描述，用于页面提示</p>
+<p><code>errors</code> 存储详细的错误信息，例如字段格式错误等。</p>
+</li>
+</ul>
+<p><strong>业务异常</strong></p>
+<p>由自己的业务代码抛出，表示一个用例的前置条件不满足、业务规则冲突等，比如参数校验不通过、权限校验失败。</p>
+<p>业务类异常必须提供2种信息：</p>
+<ol>
+<li>如果抛出该类异常，HTTP 响应状态码应该设成什么；</li>
+<li>异常的文本描述；</li>
+</ol>
+<p><strong>非业务异常</strong></p>
+<p>表示不在预期内的问题，通常由类库、框架抛出，或由于自己的代码逻辑错误导致，比如数据库连接失败、空指针异常、除0错误等等</p>
+<p>非业务类异常提供2种信息：</p>
+<ol>
+<li>HTTP响应状态码统一设置为500</li>
+<li>线上可以统一文案如“服务器端错误，请稍后再试”</li>
+</ol>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">子不语</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-09-05
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/2018/06/%E8%BD%AF%E4%BB%B6%E7%89%88%E6%9C%AC%E9%80%92%E5%A2%9E%E7%AE%A1%E7%90%86%E7%AD%96%E7%95%A5/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">软件版本递增管理策略</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/2018/03/redis-%E9%85%8D%E7%BD%AE%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E9%80%9F%E6%9F%A5/">
+            <span class="next-text nav-default">Redis 配置常用配置速查</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:hi@gitblog.me" class="iconfont icon-email" title="email"></a>
+  <a href="http://localhost:1313/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">子不语</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.d7b7ada643c9c1a983026e177f141f7363b4640d619caf01d8831a6718cd44ea.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

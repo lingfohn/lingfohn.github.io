@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>[ redis系列 ] 02| Redis常见使用场景 - Flow</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="子不语" /><meta name="description" content="分布式缓存 缓存数据模型特征： 命中率 命中率=返回正确结果数/请求缓存次数，命中率问题是缓存中的一个非常重要的问题，它是衡量缓存有效性的重要指标" /><meta name="keywords" content="gitblog, blog, gitblog.me" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.72.0 with theme even" />
+
+
+<link rel="canonical" href="http://localhost:1313/2019/09/redis%E7%B3%BB%E5%88%97-02-redis%E5%B8%B8%E8%A7%81%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.78f8f17bab244b9ee62ad16480c9584d5fc2db06ae20681d1ca225cefd80767c.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="[ redis系列 ] 02| Redis常见使用场景" />
+<meta property="og:description" content="分布式缓存 缓存数据模型特征： 命中率 命中率=返回正确结果数/请求缓存次数，命中率问题是缓存中的一个非常重要的问题，它是衡量缓存有效性的重要指标" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/2019/09/redis%E7%B3%BB%E5%88%97-02-redis%E5%B8%B8%E8%A7%81%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/" />
+<meta property="article:published_time" content="2019-09-12T16:14:56+08:00" />
+<meta property="article:modified_time" content="2019-09-12T16:14:56+08:00" />
+<meta itemprop="name" content="[ redis系列 ] 02| Redis常见使用场景">
+<meta itemprop="description" content="分布式缓存 缓存数据模型特征： 命中率 命中率=返回正确结果数/请求缓存次数，命中率问题是缓存中的一个非常重要的问题，它是衡量缓存有效性的重要指标">
+<meta itemprop="datePublished" content="2019-09-12T16:14:56&#43;08:00" />
+<meta itemprop="dateModified" content="2019-09-12T16:14:56&#43;08:00" />
+<meta itemprop="wordCount" content="3203">
+
+
+
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="[ redis系列 ] 02| Redis常见使用场景"/>
+<meta name="twitter:description" content="分布式缓存 缓存数据模型特征： 命中率 命中率=返回正确结果数/请求缓存次数，命中率问题是缓存中的一个非常重要的问题，它是衡量缓存有效性的重要指标"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Flow</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">Flow</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">[ redis系列 ] 02| Redis常见使用场景</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-09-12 </span>
+        
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#分布式缓存">分布式缓存</a>
+      <ul>
+        <li><a href="#缓存数据模型特征">缓存数据模型特征：</a></li>
+        <li><a href="#redis的过期策略和内存淘汰机制">redis的过期策略和内存淘汰机制</a></li>
+        <li><a href="#缓存与数据库双写一致性解决方案">缓存与数据库双写一致性解决方案</a></li>
+      </ul>
+    </li>
+    <li><a href="#分布式锁">分布式锁</a>
+      <ul>
+        <li><a href="#实现原理">实现原理</a></li>
+        <li><a href="#多实例分布式锁">多实例分布式锁</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考">参考：</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <h2 id="分布式缓存">分布式缓存</h2>
+<h3 id="缓存数据模型特征">缓存数据模型特征：</h3>
+<ol>
+<li>
+<p><strong>命中率</strong></p>
+<p>命中率=返回正确结果数/请求缓存次数，命中率问题是缓存中的一个非常重要的问题，它是衡量缓存有效性的重要指标。命中率越高，表明缓存的使用率越高。</p>
+</li>
+<li>
+<p><strong>最大元素（最大空间）</strong></p>
+<p>缓存中可以存放的最大元素的数量，一旦缓存中元素数量超过这个值（或者缓存数据所占空间超过其最大支持空间），那么将会触发缓存启动清空策略。根据不同的场景合理的设置最大元素值往往可以一定程度上提高缓存的命中率，从而更有效的时候缓存。</p>
+</li>
+<li>
+<p><strong>清空策略</strong></p>
+<p>如上描述，缓存的存储空间有限制，当缓存空间被用满时，如何保证在稳定服务的同时有效提升命中率？这就由缓存清空策略来处理，设计适合自身数据特征的清空策略能有效提升命中率</p>
+</li>
+</ol>
+<h3 id="redis的过期策略和内存淘汰机制">redis的过期策略和内存淘汰机制</h3>
+<p>在我们平常使用redis做缓存的时候，我们经常会给这个缓存设置一个过期时间，那么大家都知道如果我们在查过了过期时间的key时是不会有数据的。</p>
+<p><strong>那么所有过期key数据已经被删除了吗？是如何删除的？</strong></p>
+<p>其实如果一个key过期了，但是数据不一定已经被删除了，因为redis采用的是定期删除和惰性删除。</p>
+<blockquote>
+<p>定期删除是指redis默认会每隔100ms会随机抽取一些设置了过期时间的key检查是否过期了，如果过期了就删除。</p>
+</blockquote>
+<p>那么为什么不遍历删除所有的而是随机抽取一些呢？是因为可能redis中放置了大量的key,如果你每隔100ms都遍历，那么CPU肯定爆炸，redis也就GG了。</p>
+<p><strong>那么这样的话，为什么去查过期的key的话会查不到？</strong></p>
+<p>其实这就是redis的惰性删除，在你去查key的时候，redis会检查一下这个key是否设置了过期时间和是否已经过期了，如果是redis会删除这个key，并且返回空。</p>
+<p><strong>那么这样的话岂不是出大问题了，如果过期了又没有去查这个key,垃圾数据大量堆积，把redis的内存耗尽了怎么办？</strong></p>
+<p>其实当内存占用过多的时候，此时会进行内存淘汰，redis提供了如下策略：</p>
+<ul>
+<li><strong>noeviction</strong>：当内存不足以容纳新写入数据时，新写入数据会报错。</li>
+<li><strong>allkeys-lru</strong>：当内存不足以容纳新写入数据时，会移除最近最少使用的key。</li>
+<li><strong>allkeys-random</strong>：当内存不足以容纳新写入数据时，会随机移除某个key。</li>
+<li><strong>volatile-lru</strong>：当内存不足以容纳新写入数据时，在设置了过期时间的键空间中，移除最近最少使用的key。</li>
+<li><strong>volatile-random</strong>：当内存不足以容纳新写入数据时，在设置了过期时间的键空间中，随机移除某个key。</li>
+</ul>
+<ul>
+<li><strong>volatile-ttl</strong>：当内存不足以容纳新写入数据时，在设置了过期时间的键空间中，有更早过期时间的key优先移除。</li>
+</ul>
+<p>以上几个策略最常用的应该是allkeys-lru，其实这个也要根据业务场景去选择。</p>
+<h3 id="缓存与数据库双写一致性解决方案">缓存与数据库双写一致性解决方案</h3>
+<p><code>Cache Aside Pattern原则</code></p>
+<blockquote>
+<p>读的时候，先读缓存，缓存没有的话，那么就读数据库，然后取出数据后放入缓存，同时返回响应。更新的时候，先删除缓存，然后再更新数据库。</p>
+</blockquote>
+<p><strong>方案一</strong>：队列串行化，当更新数据的时候，根据数据的唯一标识可以经过hash分发后搞到一个jvm内部队列，读取数据的时候，如果发现数据不在缓存中，那么将重新读取+ 更新缓存的操作也根据唯一标识发送到同一个jvm内部的队列，可以判断一下队列中是否已经有查询更新缓存的操作，如果有直接把更新缓存操作取消掉，然后每个队列单线程消费。但是这种方案有几个问题需要根据业务或者测试去完善优化，首先多实例服务怎么把请求根据数据的唯一标识路由到同一个实例；其次，读请求长阻塞、请求吞吐量、热点问题这些可能需要大量的压力测试和业务处理。</p>
+<p><strong>方案二</strong>：分布式锁，当读数据的时候如果缓存miss，可以去尝试根据唯一标识（例如userId）获取锁，如果获取不到直接从数据库查询数据返回即可，不更新缓存，反之则更新缓存，之后释放锁。当写请求过来时要保证获取到公平锁或者获取锁失败可以直接拒绝（公平性获取锁可以通过zookeeper的临时顺序节点来实现），在更新完数据库可以同时更新缓存（也可以不更新）。</p>
+<h2 id="分布式锁">分布式锁</h2>
+<p>在多线程环境下，通常会使用锁来保证有且只有一个线程来操作共享资源。利用操作系统提供的锁机制，可以确保多线程或多进程下的并发唯一操作。但如果在多机环境下就不能满足了，当A，B两台机器同时操作C机器的共享资源时，就需要第三方的锁机制来保证在分布式环境下的资源协调，也称分布式锁。</p>
+<h3 id="实现原理">实现原理</h3>
+<p>由于Redis是单线程模型，命令操作原子性，所以利用这个特性可以很容易的实现分布式锁。 获得一个锁。</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">SET key uuid NX PX timeout
+SET resource_name uniqueVal NX PX 30000
+</code></pre></div><p>命令中的NX表示如果key不存在就添加，存在则直接返回。PX表示以毫秒为单位设置key的过期时间，这里是30000ms。 设置过期时间是防止获得锁的客户端突然崩溃掉或其他异常情况，导致redis中的对象锁一直无法释放，造成死锁。
+Key的值需要在所有请求锁服务的客户端中，确保是个唯一值。 这是为了保证拿到锁的客户端能安全释放锁，防止这个锁对象被其他客户端删除。</p>
+<p>举个例子：</p>
+<ol>
+<li>A客户端拿到对象锁，但在因为一些原因被阻塞导致无法及时释放锁。</li>
+<li>因为过期时间已到，Redis中的锁对象被删除。</li>
+<li>B客户端请求获取锁成功。</li>
+<li>A客户端此时阻塞操作完成，删除key释放锁。</li>
+<li>C客户端请求获取锁成功。</li>
+<li>这时B、C都拿到了锁，因此分布式锁失效。</li>
+</ol>
+<p>要避免例子中的情况发生，就要保证key的值是唯一的，只有拿到锁的客户端才能进行删除。 基于这个原因，普通的del命令是不能满足要求的，我们需要一个能判断客户端传过来的value和锁对象的value是否一样的命令。遗憾的是Redis并没有这样的命令，但可以通过Lua脚本来完成：</p>
+<div class="highlight"><pre class="chroma"><code class="language-lua" data-lang="lua"><span class="kr">if</span> <span class="n">redis.call</span><span class="p">(</span><span class="s2">&#34;get&#34;</span><span class="p">,</span><span class="n">KEYS</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="n">ARGV</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="kr">then</span> 
+   <span class="kr">return</span> <span class="n">redis.call</span><span class="p">(</span><span class="s2">&#34;del&#34;</span><span class="p">,</span><span class="n">KEYS</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+ <span class="kr">else</span> 
+   <span class="kr">return</span> <span class="mi">0</span>
+ <span class="kr">end</span>
+</code></pre></div><p>逻辑很简单，获取key中的值和参数中的值相比较，相等删除，不相等返回0</p>
+<h3 id="多实例分布式锁">多实例分布式锁</h3>
+<p>上面是在单个Redis实例实现分布式锁的，这存在一个问题就是，如果这台实例因某些原因崩溃掉，那么所有客户端的锁服务全部失效。
+Redis本身支持Master-Slave结构，可以一主多从，采用高可用方法，可以保证在master挂的时候自动切换到slave。 但是由于主从之间是异步同步数据的，所以redis并不能完全的实现锁的安全性。 举个例子来说：</p>
+<ol>
+<li>A客户端在master实例上获得一个锁。</li>
+<li>在对象锁key传送到slave之前，master崩溃掉。</li>
+<li>一个slave被选举成master。</li>
+<li>B客户端可以获取到同个key的锁，但A也已经拿到锁，导致锁失效。</li>
+</ol>
+<p>在多台master情况下实现这个算法，并保证锁的安全性。 步骤如下：</p>
+<ol>
+<li>客户端以毫秒为单位获取当前时间。</li>
+<li>使用同样key和值，循环在多个实例中获得锁。 为了获得锁，客户端应该设置个偏移时间，它小于锁自动释放时间(即key的过期时间)。 举个例子来说，如果一个锁自动释放时间是10秒，那偏移时间应该设置在5~50毫秒的范围。 防止因为某个实例崩溃掉或其他原因，导致client在获取锁时耗时过长。</li>
+<li>计算获取所有锁的耗时，即当前时间减去开始时间，得到a值。 用锁自动释放时间减去a值，在减去偏移时间，得到c值，如果获取锁成功的实例数量大于实际的数量一半，并且c大于0，那么锁就被获取成功。</li>
+<li>锁获取成功，锁对象的有效时间是上面的c值。</li>
+<li>若是客户端因为一些原因获取失败，原因可能是上面的c值为负数或者锁成功的数量小于实例数，以用N/2+1当标准(N为实例数)。 那么会释放所有实例上的锁。</li>
+</ol>
+<p>上面描述可能不方便理解，用代码表示如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">//锁自动释放时间
+</span><span class="c1"></span><span class="n">TimeSpan</span> <span class="n">ttl</span><span class="o">=</span><span class="k">new</span> <span class="n">TimeSpan</span><span class="o">(</span><span class="n">0</span><span class="o">,</span><span class="n">0</span><span class="o">,</span><span class="n">0</span><span class="o">,</span><span class="n">30000</span><span class="o">)</span>
+<span class="c1">//获取锁成功的数量
+</span><span class="c1"></span> <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> 
+<span class="c1">//记录开始时间
+</span><span class="c1"></span> <span class="n">var</span> <span class="n">startTime</span> <span class="o">=</span> <span class="n">DateTime</span><span class="o">.</span><span class="na">Now</span><span class="o">;</span>
+
+  <span class="c1">//在每个实例上获取锁
+</span><span class="c1"></span>                <span class="n">for_each_redis</span><span class="o">(</span>
+                    <span class="n">redis</span> <span class="o">=&gt;</span>
+                    <span class="o">{</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="n">LockInstance</span><span class="o">(</span><span class="n">redis</span><span class="o">,</span> <span class="n">resource</span><span class="o">,</span> <span class="n">val</span><span class="o">,</span> <span class="n">ttl</span><span class="o">))</span> <span class="n">n</span> <span class="o">+=</span> <span class="n">1</span><span class="o">;</span>
+                    <span class="o">}</span>
+                <span class="o">);</span>
+
+<span class="c1">//偏移时间是锁自动释放时间的1%，根据上面10s是5-50毫秒推出。
+</span><span class="c1"></span> <span class="n">var</span> <span class="n">drift</span> <span class="o">=</span> <span class="n">Convert</span><span class="o">.</span><span class="na">ToInt32</span><span class="o">(</span><span class="n">ttl</span><span class="o">.</span><span class="na">TotalMilliseconds</span> <span class="o">*</span> <span class="n">0</span><span class="o">.</span><span class="na">01</span><span class="o">);</span> 
+
+<span class="c1">//锁对象的有效时间=锁自动释放时间-(当前时间-开始时间)-偏移时间
+</span><span class="c1"></span> <span class="n">var</span> <span class="n">validity_time</span> <span class="o">=</span> <span class="n">ttl</span> <span class="o">-</span> <span class="o">(</span><span class="n">DateTime</span><span class="o">.</span><span class="na">Now</span> <span class="o">-</span> <span class="n">startTime</span><span class="o">)</span> <span class="o">-</span> <span class="k">new</span> <span class="n">TimeSpan</span><span class="o">(</span><span class="n">0</span><span class="o">,</span> <span class="n">0</span><span class="o">,</span> <span class="n">0</span><span class="o">,</span> <span class="n">0</span><span class="o">,</span> <span class="n">drift</span><span class="o">);</span>
+
+<span class="c1">//判断成功的数量和有效时间c值是否大于0 if (n &gt;= (N/2+1) &amp;&amp; validity_time.TotalMilliseconds &gt; 0) { }
+</span></code></pre></div><h2 id="参考">参考：</h2>
+<p><a href="https://tech.meituan.com/2017/03/17/cache-about.html">https://tech.meituan.com/2017/03/17/cache-about.html</a></p>
+<p><a href="http://xuyangyang.club/articles/2018/11/11/1541950658138.html">http://xuyangyang.club/articles/2018/11/11/1541950658138.html</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/29665317">https://zhuanlan.zhihu.com/p/29665317</a></p>
+<p><a href="https://juejin.im/post/5cee35d6f265da1b5f2637ae">https://juejin.im/post/5cee35d6f265da1b5f2637ae</a></p>
+<p><a href="https://segmentfault.com/a/1190000019129429">https://segmentfault.com/a/1190000019129429</a></p>
+<p><a href="https://juejin.im/post/5cee4f59f265da1bb679faef">https://juejin.im/post/5cee4f59f265da1bb679faef</a></p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">子不语</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-09-12
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/2019/09/vue-ls%E6%8F%92%E4%BB%B6%E4%BB%8B%E7%BB%8D/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Vue Ls插件介绍</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/2019/09/redis%E7%B3%BB%E5%88%97-03-redis%E4%BD%BF%E7%94%A8%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">
+            <span class="next-text nav-default">[ redis系列 ] 03| Redis使用常见问题及解决方案</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:hi@gitblog.me" class="iconfont icon-email" title="email"></a>
+  <a href="http://localhost:1313/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">子不语</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.d7b7ada643c9c1a983026e177f141f7363b4640d619caf01d8831a6718cd44ea.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

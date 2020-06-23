@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Redis 配置常用配置速查 - Flow</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="子不语" /><meta name="description" content="启动方式 Redis默认不是以守护进程的方式运行，可以通过该配置项修改，使用yes启用守护进程 daemonize no 设置PID文件 当Redis以守护进程方式运行" /><meta name="keywords" content="gitblog, blog, gitblog.me" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.72.0 with theme even" />
+
+
+<link rel="canonical" href="http://localhost:1313/2018/03/redis-%E9%85%8D%E7%BD%AE%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E9%80%9F%E6%9F%A5/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.78f8f17bab244b9ee62ad16480c9584d5fc2db06ae20681d1ca225cefd80767c.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="Redis 配置常用配置速查" />
+<meta property="og:description" content="启动方式 Redis默认不是以守护进程的方式运行，可以通过该配置项修改，使用yes启用守护进程 daemonize no 设置PID文件 当Redis以守护进程方式运行" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/2018/03/redis-%E9%85%8D%E7%BD%AE%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E9%80%9F%E6%9F%A5/" />
+<meta property="article:published_time" content="2018-03-06T17:27:39+08:00" />
+<meta property="article:modified_time" content="2019-09-05T17:27:39+08:00" />
+<meta itemprop="name" content="Redis 配置常用配置速查">
+<meta itemprop="description" content="启动方式 Redis默认不是以守护进程的方式运行，可以通过该配置项修改，使用yes启用守护进程 daemonize no 设置PID文件 当Redis以守护进程方式运行">
+<meta itemprop="datePublished" content="2018-03-06T17:27:39&#43;08:00" />
+<meta itemprop="dateModified" content="2019-09-05T17:27:39&#43;08:00" />
+<meta itemprop="wordCount" content="2188">
+
+
+
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis 配置常用配置速查"/>
+<meta name="twitter:description" content="启动方式 Redis默认不是以守护进程的方式运行，可以通过该配置项修改，使用yes启用守护进程 daemonize no 设置PID文件 当Redis以守护进程方式运行"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Flow</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">Flow</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Redis 配置常用配置速查</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-03-06 </span>
+        
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#启动方式">启动方式</a></li>
+    <li><a href="#设置pid文件">设置PID文件</a></li>
+    <li><a href="#指定redis监听端口">指定Redis监听端口</a></li>
+    <li><a href="#绑定的主机地址">绑定的主机地址</a></li>
+    <li><a href="#超时时间">超时时间</a></li>
+    <li><a href="#指定日志记录级别">指定日志记录级别</a></li>
+    <li><a href="#日志记录方式">日志记录方式</a></li>
+    <li><a href="#设置数据库的数量">设置数据库的数量</a></li>
+    <li><a href="#指定在多长时间内">指定在多长时间内</a></li>
+    <li><a href="#指定存储至本地数据库时是否压缩数据">指定存储至本地数据库时是否压缩数据</a></li>
+    <li><a href="#指定本地数据库文件名">指定本地数据库文件名</a></li>
+    <li><a href="#指定本地数据库存放目录">指定本地数据库存放目录</a></li>
+    <li><a href="#设置master服务的ip地址及端口">设置master服务的IP地址及端口</a></li>
+    <li><a href="#当master服务设置了密码保护时">当master服务设置了密码保护时</a></li>
+    <li><a href="#设置redis连接密码">设置Redis连接密码</a></li>
+    <li><a href="#设置同一时间最大客户端连接数">设置同一时间最大客户端连接数</a></li>
+    <li><a href="#指定redis最大内存限制">指定Redis最大内存限制</a></li>
+    <li><a href="#指定是否在每次更新操作后进行日志记录">指定是否在每次更新操作后进行日志记录</a></li>
+    <li><a href="#指定更新日志文件名">指定更新日志文件名</a></li>
+    <li><a href="#指定更新日志条件">指定更新日志条件</a></li>
+    <li><a href="#指定是否启用虚拟内存机制">指定是否启用虚拟内存机制</a></li>
+    <li><a href="#虚拟内存文件路径">虚拟内存文件路径</a></li>
+    <li><a href="#设置大于vm-max-memory的数据存入虚拟内存">设置大于vm-max-memory的数据存入虚拟内存</a></li>
+    <li><a href="#设置虚拟内存页面大小">设置虚拟内存页面大小</a></li>
+    <li><a href="#设置虚拟内存页数">设置虚拟内存页数</a></li>
+    <li><a href="#设置访问swap文件的线程数">设置访问swap文件的线程数</a></li>
+    <li><a href="#设置是否合并较小应答包">设置是否合并较小应答包</a></li>
+    <li><a href="#指定hash算法临界值">指定hash算法临界值</a></li>
+    <li><a href="#指定是否激活重置哈希">指定是否激活重置哈希</a></li>
+    <li><a href="#其它配置文件目录">其它配置文件目录</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <h2 id="启动方式">启动方式</h2>
+<p>Redis默认不是以守护进程的方式运行，可以通过该配置项修改，使用yes启用守护进程</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">daemonize no
+</code></pre></div><h2 id="设置pid文件">设置PID文件</h2>
+<p>当Redis以守护进程方式运行时，Redis默认会把pid写入/var/run/redis.pid文件，可以通过pidfile指定</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">pidfile /var/run/redis.pid
+</code></pre></div><h2 id="指定redis监听端口">指定Redis监听端口</h2>
+<p>默认端口为6379，作者在自己的一篇博文中解释了为什么选用6379作为默认端口，因为6379在手机按键上MERZ对应的号码，而MERZ取自意大利歌女Alessia Merz的名字</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">port 6379
+</code></pre></div><h2 id="绑定的主机地址">绑定的主机地址</h2>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">bind 127.0.0.1
+</code></pre></div><h2 id="超时时间">超时时间</h2>
+<p>当客户端闲置多长时间后关闭连接，如果指定为0，表示关闭该功能</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">timeout 300
+</code></pre></div><h2 id="指定日志记录级别">指定日志记录级别</h2>
+<p>Redis总共支持四个级别：debug、verbose、notice、warning，默认为verbose</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">loglevel verbose
+</code></pre></div><h2 id="日志记录方式">日志记录方式</h2>
+<p>默认为标准输出。如果配置Redis为守护进程方式运行，而这里又配置为日志记录方式为标准输出，则日志将会发送给/dev/null</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">logfile stdout
+</code></pre></div><h2 id="设置数据库的数量">设置数据库的数量</h2>
+<p>默认数据库为0，可以使用SELECT <!-- raw HTML omitted -->命令在连接上指定数据库id</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">databases 16
+</code></pre></div><h2 id="指定在多长时间内">指定在多长时间内</h2>
+<p>有多少次更新操作，就将数据同步到数据文件，可以多个条件配合
+Redis默认配置文件中提供了三个条件：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">save 900 1
+
+save 300 10
+
+save 60 10000
+</code></pre></div><p>分别表示900秒（15分钟）内有1个更改，300秒（5分钟）内有10个更改以及60秒内有10000个更改。</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">save &lt;seconds&gt; &lt;changes&gt;
+</code></pre></div><h2 id="指定存储至本地数据库时是否压缩数据">指定存储至本地数据库时是否压缩数据</h2>
+<p>默认为yes，Redis采用LZF压缩，如果为了节省CPU时间，可以关闭该选项，但会导致数据库文件变的巨大</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">rdbcompression yes
+</code></pre></div><h2 id="指定本地数据库文件名">指定本地数据库文件名</h2>
+<p>默认值为dump.rdb</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">dbfilename dump.rdb
+</code></pre></div><h2 id="指定本地数据库存放目录">指定本地数据库存放目录</h2>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">dir ./
+</code></pre></div><h2 id="设置master服务的ip地址及端口">设置master服务的IP地址及端口</h2>
+<p>设置当本机为slav服务时，设置master服务的IP地址及端口，在Redis启动时，它会自动从master进行数据同步</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">slaveof &lt;masterip&gt; &lt;masterport&gt;
+</code></pre></div><h2 id="当master服务设置了密码保护时">当master服务设置了密码保护时</h2>
+<p>slav服务连接master的密码</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">masterauth &lt;master-password&gt;
+</code></pre></div><h2 id="设置redis连接密码">设置Redis连接密码</h2>
+<p>如果配置了连接密码，客户端在连接Redis时需要通过AUTH <!-- raw HTML omitted -->命令提供密码，默认关闭</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">requirepass foobared
+</code></pre></div><h2 id="设置同一时间最大客户端连接数">设置同一时间最大客户端连接数</h2>
+<p>默认无限制，Redis可以同时打开的客户端连接数为Redis进程可以打开的最大文件描述符数，如果设置 maxclients 0，表示不作限制。当客户端连接数到达限制时，Redis会关闭新的连接并向客户端返回max number of clients reached错误信息</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">maxclients 128
+</code></pre></div><h2 id="指定redis最大内存限制">指定Redis最大内存限制</h2>
+<p>Redis在启动时会把数据加载到内存中，达到最大内存后，Redis会先尝试清除已到期或即将到期的Key，当此方法处理 后，仍然到达最大内存设置，将无法再进行写入操作，但仍然可以进行读取操作。Redis新的vm机制，会把Key存放内存，Value会存放在swap区</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">maxmemory &lt;bytes&gt;
+</code></pre></div><h2 id="指定是否在每次更新操作后进行日志记录">指定是否在每次更新操作后进行日志记录</h2>
+<p>Redis在默认情况下是异步的把数据写入磁盘，如果不开启，可能会在断电时导致一段时间内的数据丢失。因为 redis本身同步数据文件是按上面save条件来同步的，所以有的数据会在一段时间内只存在于内存中。默认为no</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">appendonly no
+</code></pre></div><h2 id="指定更新日志文件名">指定更新日志文件名</h2>
+<p>默认为appendonly.aof</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">appendfilename appendonly.aof
+</code></pre></div><h2 id="指定更新日志条件">指定更新日志条件</h2>
+<p>共有3个可选值：</p>
+<p>​    <strong>no</strong>：表示等操作系统进行数据缓存同步到磁盘（快）
+​    <strong>always</strong>：表示每次更新操作后手动调用fsync()将数据写到磁盘（慢，安全）
+​    <strong>everysec</strong>：表示每秒同步一次（折衷，默认值）</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">appendfsync everysec
+</code></pre></div><h2 id="指定是否启用虚拟内存机制">指定是否启用虚拟内存机制</h2>
+<p>默认值为no，简单的介绍一下，VM机制将数据分页存放，由Redis将访问量较少的页即冷数据swap到磁盘上，访问多的页面由磁盘自动换出到内存中（在后面的文章我会仔细分析Redis的VM机制）</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">vm-enabled no
+</code></pre></div><h2 id="虚拟内存文件路径">虚拟内存文件路径</h2>
+<p>默认值为/tmp/redis.swap，不可多个Redis实例共享</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">vm-swap-file /tmp/redis.swap
+</code></pre></div><h2 id="设置大于vm-max-memory的数据存入虚拟内存">设置大于vm-max-memory的数据存入虚拟内存</h2>
+<p>无论vm-max-memory设置多小,所有索引数据都是内存存储的(Redis的索引数据 就是keys),也就是说,当vm-max-memory设置为0的时候,其实是所有value都存在于磁盘。默认值为0</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">vm-max-memory 0
+</code></pre></div><h2 id="设置虚拟内存页面大小">设置虚拟内存页面大小</h2>
+<p>Redis swap文件分成了很多的page，一个对象可以保存在多个page上面，但一个page上不能被多个对象共享，vm-page-size是要根据存储的 数据大小来设定的，作者建议如果存储很多小对象，page大小最好设置为32或者64bytes；如果存储很大大对象，则可以使用更大的page，如果不 确定，就使用默认值</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">vm-page-size 32
+</code></pre></div><h2 id="设置虚拟内存页数">设置虚拟内存页数</h2>
+<p>设置swap文件中的page数量，由于页表（一种表示页面空闲或使用的bitmap）是在放在内存中的，，在磁盘上每8个pages将消耗1byte的内存。</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">vm-pages 134217728
+</code></pre></div><h2 id="设置访问swap文件的线程数">设置访问swap文件的线程数</h2>
+<p>最好不要超过机器的核数,如果设置为0,那么所有对swap文件的操作都是串行的，可能会造成比较长时间的延迟。默认值为4</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">vm-max-threads 4
+</code></pre></div><h2 id="设置是否合并较小应答包">设置是否合并较小应答包</h2>
+<p>在向客户端应答时，是否把较小的包合并为一个包发送，默认为开启</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">glueoutputbuf yes
+</code></pre></div><h2 id="指定hash算法临界值">指定hash算法临界值</h2>
+<p>指定在超过一定的数量或者最大的元素超过某一临界值时，采用一种特殊的哈希算法</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">hash-max-zipmap-entries 64
+hash-max-zipmap-value 512
+</code></pre></div><h2 id="指定是否激活重置哈希">指定是否激活重置哈希</h2>
+<p>默认为开启（后面在介绍Redis的哈希算法时具体介绍）</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">activerehashing yes
+</code></pre></div><h2 id="其它配置文件目录">其它配置文件目录</h2>
+<p>指定包含其它的配置文件，可以在同一主机上多个Redis实例之间使用同一份配置文件，而同时各个实例又拥有自己的特定配置文件</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">include /path/to/local.conf
+</code></pre></div>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">子不语</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-09-05
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/2018/05/restful-api-%E6%8E%A5%E5%8F%A3%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Restful API 接口设计规范</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/2018/01/swagger-%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C/">
+            <span class="next-text nav-default">Swagger 速查手册</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:hi@gitblog.me" class="iconfont icon-email" title="email"></a>
+  <a href="http://localhost:1313/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">子不语</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.d7b7ada643c9c1a983026e177f141f7363b4640d619caf01d8831a6718cd44ea.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

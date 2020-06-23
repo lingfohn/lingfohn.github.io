@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>在Markdown中使用终端动画 - Flow</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="子不语" /><meta name="description" content="在写文章的时候，插入一些命令行代码。而命令的执行返回结果很难表现。如果用动画的方式，那么也不错的。使用termtosvg工具，它能够将命令行" /><meta name="keywords" content="gitblog, blog, gitblog.me" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.72.0 with theme even" />
+
+
+<link rel="canonical" href="http://localhost:1313/2019/09/%E5%9C%A8markdown%E4%B8%AD%E4%BD%BF%E7%94%A8%E7%BB%88%E7%AB%AF%E5%8A%A8%E7%94%BB/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.78f8f17bab244b9ee62ad16480c9584d5fc2db06ae20681d1ca225cefd80767c.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="在Markdown中使用终端动画" />
+<meta property="og:description" content="在写文章的时候，插入一些命令行代码。而命令的执行返回结果很难表现。如果用动画的方式，那么也不错的。使用termtosvg工具，它能够将命令行" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/2019/09/%E5%9C%A8markdown%E4%B8%AD%E4%BD%BF%E7%94%A8%E7%BB%88%E7%AB%AF%E5%8A%A8%E7%94%BB/" />
+<meta property="article:published_time" content="2019-09-30T11:02:37+08:00" />
+<meta property="article:modified_time" content="2019-09-30T11:02:37+08:00" />
+<meta itemprop="name" content="在Markdown中使用终端动画">
+<meta itemprop="description" content="在写文章的时候，插入一些命令行代码。而命令的执行返回结果很难表现。如果用动画的方式，那么也不错的。使用termtosvg工具，它能够将命令行">
+<meta itemprop="datePublished" content="2019-09-30T11:02:37&#43;08:00" />
+<meta itemprop="dateModified" content="2019-09-30T11:02:37&#43;08:00" />
+<meta itemprop="wordCount" content="676">
+
+
+
+<meta itemprop="keywords" content="hugo," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="在Markdown中使用终端动画"/>
+<meta name="twitter:description" content="在写文章的时候，插入一些命令行代码。而命令的执行返回结果很难表现。如果用动画的方式，那么也不错的。使用termtosvg工具，它能够将命令行"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Flow</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">Flow</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">在Markdown中使用终端动画</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-09-30 </span>
+        <div class="post-category">
+            <a href="/categories/hugo/"> hugo </a>
+            </div>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents"></nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p>在写文章的时候，插入一些命令行代码。而命令的执行返回结果很难表现。如果用动画的方式，那么也不错的。使用termtosvg工具，它能够将命令行会话保存为SVG动画。</p>
+<p><strong>安装</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ brew install termtosvg
+</code></pre></div><p>安装后，就可以直接输入termtosvg录制终端命令了，输入exit或者Ctrl+D退出录制。会自动生成一个svg格式的动画文件。将该动画文件上传到你的图床，然后直接使用图片的标签引用就可以了。</p>
+<p><code>![Example](./docs/examples/awesome_window_frame.svg)</code></p>
+<p>样例：</p>
+<p><img src="https://gitblog-me.oss-cn-hangzhou.aliyuncs.com/termtosvg_4aknp8kr.svg" alt=""></p>
+<p>但是如果直接录制，效果可能不太好。有时候可能输错命令，有时候节奏有些缓慢，造成很不好的体验。如同影片有剪辑一样，我们也需要对“影片”进行编辑。但是scv动画比较难处理，我们需要换一种方式处理。</p>
+<p>termtosvg可以把cast格式的终端录制文件转换成svg格式的动画：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$ termtosvg render recording.cast animation.svg
+</code></pre></div><p>并且termtosvg也支持录制cast（asciicast v2）类型的终端记录文件。</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$ termtosvg record recording.cast
+</code></pre></div><p>猜测termtosvg内部的实现也是先录制成cast格式的临时文件，然后再转换成svg动画文件的。</p>
+<p>而cast文件内容是下面这种格式的纯文本文件，理论上就可以直接通过任何文件编辑器进行编辑。</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">{&#34;version&#34;: 2, &#34;width&#34;: 136, &#34;height&#34;: 26}
+[1.727814, &#34;o&#34;, &#34;l&#34;]
+[1.870424, &#34;o&#34;, &#34;\bls&#34;]
+[2.197056, &#34;o&#34;, &#34;\u001b[?1l\u001b&gt;&#34;]
+[2.197273, &#34;o&#34;, &#34;\u001b[?2004l\r\r\n&#34;]
+[2.200966, &#34;o&#34;, &#34;\u001b]2;ls -G\u0007\u001b]1;ls\u0007&#34;]
+[2.205864, &#34;o&#34;, &#34;rec.cast       recording.cast\r\n&#34;]
+</code></pre></div><p>当然我们不会手工去编辑，我们还需要使用两个工具。<a href="https://asciinema.org">asciinema</a>与<a href="https://github.com/cirocosta/asciinema-edit">asciinema-edit</a>,asciinema可以录制终端，asciinema-edit可以对终端命令进行编辑。具体使用方法可以翻阅官方文档。</p>
+<p>总结一下整个过程：</p>
+<ol>
+<li><strong>asciinema录制cast记录</strong></li>
+<li><strong>asciinema-edit编辑cast</strong></li>
+<li><strong>termtosvg render生成svg动画</strong></li>
+<li><strong>上传到图床</strong></li>
+<li><strong>markdown文件引用</strong></li>
+</ol>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">子不语</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-09-30
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/hugo/">hugo</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/2019/10/%E7%BC%96%E5%86%99%E4%BA%86%E4%B8%80%E4%B8%AAtypora%E4%B8%BB%E9%A2%98/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">编写了一个Typora主题</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/2019/09/%E5%88%9D%E6%8E%A2%E4%B9%8B-sync.once/">
+            <span class="next-text nav-default">初探之 sync.Once</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:hi@gitblog.me" class="iconfont icon-email" title="email"></a>
+  <a href="http://localhost:1313/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">子不语</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.d7b7ada643c9c1a983026e177f141f7363b4640d619caf01d8831a6718cd44ea.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>一文读懂cgroup - Flow</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="子不语" /><meta name="description" content="Linux Cgroups （Control Groups）提供了对一组进程及将来子进程的资源限制、控制和统计的能力；这些资源包括CPU、内存、存储、网络等。每种资源" /><meta name="keywords" content="gitblog, blog, gitblog.me" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.72.0 with theme even" />
+
+
+<link rel="canonical" href="http://localhost:1313/2019/10/%E4%B8%80%E6%96%87%E8%AF%BB%E6%87%82cgroup/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.78f8f17bab244b9ee62ad16480c9584d5fc2db06ae20681d1ca225cefd80767c.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="一文读懂cgroup" />
+<meta property="og:description" content="Linux Cgroups （Control Groups）提供了对一组进程及将来子进程的资源限制、控制和统计的能力；这些资源包括CPU、内存、存储、网络等。每种资源" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/2019/10/%E4%B8%80%E6%96%87%E8%AF%BB%E6%87%82cgroup/" />
+<meta property="article:published_time" content="2019-10-17T14:02:49+08:00" />
+<meta property="article:modified_time" content="2019-10-17T14:02:49+08:00" />
+<meta itemprop="name" content="一文读懂cgroup">
+<meta itemprop="description" content="Linux Cgroups （Control Groups）提供了对一组进程及将来子进程的资源限制、控制和统计的能力；这些资源包括CPU、内存、存储、网络等。每种资源">
+<meta itemprop="datePublished" content="2019-10-17T14:02:49&#43;08:00" />
+<meta itemprop="dateModified" content="2019-10-17T14:02:49&#43;08:00" />
+<meta itemprop="wordCount" content="3128">
+
+
+
+<meta itemprop="keywords" content="docker,cgroup,linux," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="一文读懂cgroup"/>
+<meta name="twitter:description" content="Linux Cgroups （Control Groups）提供了对一组进程及将来子进程的资源限制、控制和统计的能力；这些资源包括CPU、内存、存储、网络等。每种资源"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Flow</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">Flow</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">一文读懂cgroup</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-10-17 </span>
+        
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p>Linux Cgroups （Control Groups）提供了对一组进程及将来子进程的资源限制、控制和统计的能力；这些资源包括CPU、内存、存储、网络等。每种资源都由一组资源控制模块来控制,称之为subsystem。可以用以下命令查看当前主机内核支持的subsystem。</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@ubuntu:~# lssubsys -a
+cpuset
+cpu,cpuacct
+blkio
+memory
+devices
+freezer
+net_cls,net_prio
+perf_event
+hugetlb
+pids
+</code></pre></div><blockquote>
+<p>tips: 如果找不到lssubsys命令，可以运行 <code>apt install cgroup-tools</code>安装。或者直接查看/proc/cgroups的内容</p>
+</blockquote>
+<p><strong>目前Linux支持下面12种subsystem</strong></p>
+<ul>
+<li><a href="https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt">cpu</a> (since Linux 2.6.24; CONFIG_CGROUP_SCHED)
+用来限制cgroup的CPU使用率。</li>
+<li><a href="https://www.kernel.org/doc/Documentation/cgroup-v1/cpuacct.txt">cpuacct</a> (since Linux 2.6.24; CONFIG_CGROUP_CPUACCT)
+统计cgroup的CPU的使用率。</li>
+<li><a href="https://www.kernel.org/doc/Documentation/cgroup-v1/cpusets.txt">cpuset</a> (since Linux 2.6.24; CONFIG_CPUSETS)
+绑定cgroup到指定CPUs和NUMA节点。</li>
+<li><a href="https://www.kernel.org/doc/Documentation/cgroup-v1/memory.txt">memory</a> (since Linux 2.6.25; CONFIG_MEMCG)
+统计和限制cgroup的内存的使用率，包括process memory, kernel memory, 和swap。</li>
+<li><a href="https://www.kernel.org/doc/Documentation/cgroup-v1/devices.txt">devices</a> (since Linux 2.6.26; CONFIG_CGROUP_DEVICE)
+限制cgroup创建(mknod)和访问设备的权限。</li>
+<li><a href="https://www.kernel.org/doc/Documentation/cgroup-v1/freezer-subsystem.txt">freezer</a> (since Linux 2.6.28; CONFIG_CGROUP_FREEZER)
+suspend和restore一个cgroup中的所有进程。</li>
+<li><a href="https://www.kernel.org/doc/Documentation/cgroup-v1/net_cls.txt">net_cls</a> (since Linux 2.6.29; CONFIG_CGROUP_NET_CLASSID)
+将一个cgroup中进程创建的所有网络包加上一个classid标记，用于<a href="http://man7.org/linux/man-pages/man8/tc.8.html">tc</a>和iptables。 只对发出去的网络包生效，对收到的网络包不起作用。</li>
+<li><a href="https://www.kernel.org/doc/Documentation/cgroup-v1/blkio-controller.txt">blkio</a> (since Linux 2.6.33; CONFIG_BLK_CGROUP)
+限制cgroup访问块设备的IO速度。</li>
+<li><a href="https://www.kernel.org/doc/Documentation/perf-record.txt">perf_event</a> (since Linux 2.6.39; CONFIG_CGROUP_PERF)
+对cgroup进行性能监控</li>
+<li><a href="https://www.kernel.org/doc/Documentation/cgroup-v1/net_prio.txt">net_prio</a> (since Linux 3.3; CONFIG_CGROUP_NET_PRIO)
+针对每个网络接口设置cgroup的访问优先级。</li>
+<li><a href="https://www.kernel.org/doc/Documentation/cgroup-v1/hugetlb.txt">hugetlb</a> (since Linux 3.5; CONFIG_CGROUP_HUGETLB)
+限制cgroup的huge pages的使用量。</li>
+<li><a href="https://www.kernel.org/doc/Documentation/cgroup-v1/pids.txt">pids</a> (since Linux 4.3; CONFIG_CGROUP_PIDS)
+限制一个cgroup及其子孙cgroup中的总进程数。</li>
+</ul>
+<p>上面这些subsystem，有些需要做资源统计，有些需要做资源控制，有些即不统计也不控制。对于cgroup树来说，有些subsystem严重依赖继承关系，有些subsystem完全用不到继承关系，而有些对继承关系没有严格要求。</p>
+<p>这里面每一个子系统都需要与内核的其他模块配合来完成资源的控制，比如对 cpu 资源的限制是通过进程调度模块根据 cpu 子系统的配置来完成的；对内存资源的限制则是内存模块根据 memory 子系统的配置来完成的，而对网络数据包的控制则需要 Traffic Control 子系统来配合完成。本文不会去深入内核是如何使用每一个子系统来实现资源的限制~~（因为我也没有深入的研究过）~~,只需要懂得，linux的资源控制是由内核实现的功能即可。</p>
+<p>那么内核又是怎么把cgroups的功能暴露给用户态的呢？答案是linux的设计思想，<strong>一些皆文件</strong>。我们执行一下命令</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"> $ mount -t cgroup
+cgroup on /sys/fs/cgroup/systemd type cgroup (rw,nosuid,nodev,noexec,relatime,xattr,release_agent=/lib/systemd/systemd-cgroups-agent,name=systemd)
+cgroup on /sys/fs/cgroup/net_cls,net_prio type cgroup (rw,nosuid,nodev,noexec,relatime,net_cls,net_prio)
+cgroup on /sys/fs/cgroup/cpuset type cgroup (rw,nosuid,nodev,noexec,relatime,cpuset)
+cgroup on /sys/fs/cgroup/cpu,cpuacct type cgroup (rw,nosuid,nodev,noexec,relatime,cpu,cpuacct)
+cgroup on /sys/fs/cgroup/perf_event type cgroup (rw,nosuid,nodev,noexec,relatime,perf_event)
+cgroup on /sys/fs/cgroup/memory type cgroup (rw,nosuid,nodev,noexec,relatime,memory)
+cgroup on /sys/fs/cgroup/hugetlb type cgroup (rw,nosuid,nodev,noexec,relatime,hugetlb)
+cgroup on /sys/fs/cgroup/devices type cgroup (rw,nosuid,nodev,noexec,relatime,devices)
+cgroup on /sys/fs/cgroup/pids type cgroup (rw,nosuid,nodev,noexec,relatime,pids)
+cgroup on /sys/fs/cgroup/blkio type cgroup (rw,nosuid,nodev,noexec,relatime,blkio)
+cgroup on /sys/fs/cgroup/freezer type cgroup (rw,nosuid,nodev,noexec,relatime,freezer)
+</code></pre></div><p>可以看到linux是使用文件系统挂载的方式，将cgroup以文件的形式提供给用户访问。</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"># 我们到挂载/sys/fs/cgroup/目录，看下面有什么东东
+$ ls /sys/fs/cgroup/
+blkio  cpuacct      cpuset   freezer  memory   net_cls,net_prio  perf_event  systemd
+cpu    cpu,cpuacct  devices  hugetlb  net_cls  net_prio          pids
+$ tree cpu
+cpu
+├── cgroup.clone_children
+├── cgroup.procs
+├── cgroup.sane_behavior
+├── cpuacct.stat
+├── cpuacct.usage
+├── cpuacct.usage_percpu
+├── cpu.cfs_period_us
+├── cpu.cfs_quota_us
+├── cpu.shares
+├── cpu.stat
+├── init.scope
+│   ├── cgroup.clone_children
+│   ├── cgroup.procs
+│   ├── cpuacct.stat
+│   ├── cpuacct.usage
+│   ├── cpuacct.usage_percpu
+│   ├── cpu.cfs_period_us
+│   ├── cpu.cfs_quota_us
+│   ├── cpu.shares
+│   ├── cpu.stat
+│   ├── notify_on_release
+│   └── tasks
+├── notify_on_release
+├── release_agent
+...
+</code></pre></div><p>在/sys/fs/cgroup/下都以文件目录的形式组织成一棵树状结构，称之为hierarchy，我们可以理解为“cgroup树”，每颗cgroup树都与零到多个subsystem关联。比如面的memory目录就与<a href="https://www.kernel.org/doc/Documentation/cgroup-v1/memory.txt">memory</a>子系统进行了关联。net_cls,net_prio目录就关联了<a href="https://www.kernel.org/doc/Documentation/cgroup-v1/net_cls.txt">net_cls</a> 、<a href="https://www.kernel.org/doc/Documentation/cgroup-v1/net_prio.txt">net_prio</a>两个子系统。如果不考虑不与任何subsystem关联的这种情况，linux中有12种subsystem，那么理论上最多就只有12颗cgroup树（hierarchy）。</p>
+<p>接着我们继续进入/sys/fs/cgroup/cpu目录，查看一下里面的内容：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">cgroup.clone_children  cpuacct.usage         cpu.shares         release_agent
+cgroup.procs           cpuacct.usage_percpu  cpu.stat           system.slice
+cgroup.sane_behavior   cpu.cfs_period_us     init.scope         tasks
+cpuacct.stat           cpu.cfs_quota_us      notify_on_release  user.slice
+</code></pre></div><p>如果熟悉 Linux CPU 管理的话，你就会在它的输出里注意到 cfs_period 和 cfs_quota 这样的关键词。这两个参数需要组合使用，可以用来限制进程在长度为 cfs_period 的一段时间内，只能被分配到总量为 cfs_quota 的 CPU 时间。而cgroup.procs这个文件内其实保存了要控制的进程的PID。</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$ cat cgroup.procs
+2
+3
+5
+...
+$ cat cpu.cfs_period_us
+100000
+$ cat cpu.cfs_quota_us
+-1
+</code></pre></div><p>上面的说明，在cgroup.procs内的进程，在cpu的每100000us的控制周期内，cpu的限制是-1（没有限制）。</p>
+<p>下面我们演示一下如果使用cgroup来控制进程的CPU使用率。我们先运行一个无限循环将cpu跑满</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$ while :; do echo test &gt; /dev/null; done &amp;
+[1] 12004
+</code></pre></div><p>使用top命令验证一下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">top - 10:30:17 up 23:30,  2 users,  load average: 1.02, 0.69, 0.31
+Tasks: 176 total,   2 running, 174 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 64.2 us, 35.8 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  2029168 total,   577892 free,   265368 used,  1185908 buff/cache
+KiB Swap:  1003516 total,  1003516 free,        0 used.  1536624 avail Mem
+
+   PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND
+ 12004 root      20   0   22868   2948    764 R 98.7  0.1   5:16.14 bash
+     3 root      20   0       0      0      0 S  0.7  0.0   0:04.21 ksoftirqd/0
+  9730 root      20   0   92796   6988   6056 S  0.3  0.3   0:01.78 sshd
+...
+</code></pre></div><p>看到PID为12004的那个进程显得格外扎眼，它的cpu利用率达到了98.7%，这正是我们想要的结果。</p>
+<p>我们怎样对这个进程进行限制呢？。</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"># 在/sys/fs/cgroup/cpu目录下面创建子目录test
+$ mkdir test
+# 查看test目录内容
+$ ls test
+cgroup.clone_children  cpuacct.stat   cpuacct.usage_percpu  cpu.cfs_quota_us  cpu.stat           tasks
+cgroup.procs           cpuacct.usage  cpu.cfs_period_us     cpu.shares        notify_on_release
+</code></pre></div><p>我们创建了test目录，系统自动给我们生成了一个子cgroup树,由于是在/sys/fs/cgroup/cpu目录下，所以它的限制内容也是针对cpu。</p>
+<p>接下来，我们可以通过修改这些文件的内容来设置限制。</p>
+<p>比如，向 test 组里的 cfs_quota 文件写入 20 ms（20000 us）：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">echo 20000 &gt; /sys/fs/cgroup/cpu/test/cpu.cfs_quota_us
+</code></pre></div><p>结合前面的介绍，你应该能明白这个操作的含义，它意味着在每 100 ms 的时间里，被该控制组限制的进程只能使用 20 ms 的 CPU 时间，也就是说这个进程只能使用到 20% 的 CPU 带宽。</p>
+<p>接下来，我们把被限制的进程的 PID 写入 test 组里的 tasks 文件，上面的设置就会对该进程生效了：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">echo 12004 &gt; /sys/fs/cgroup/cpu/test/cgroup.procs
+</code></pre></div><p>现在我们再看看当前的情况：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">top - 10:47:39 up 23:48,  2 users,  load average: 0.15, 0.66, 0.67
+Tasks: 176 total,   2 running, 174 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.5 us, 10.2 sy,  0.0 ni, 78.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  2029168 total,   578656 free,   264532 used,  1185980 buff/cache
+KiB Swap:  1003516 total,  1003516 free,        0 used.  1537456 avail Mem
+
+   PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND
+ 12004 root      20   0   22868   2948    764 R 19.9  0.1  20:26.36 bash
+ 12039 root      20   0   41800   3688   3092 R  0.7  0.2   0:00.02 top
+...
+</code></pre></div><p>看到当前12004进程的cpu使用率基本稳定在了20%左右了。</p>
+<p>接下来我们再重新打开一个窗口，再执行再把cpu跑满：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$ while :; do echo test &gt; /dev/null; done &amp;
+[1] 12146
+</code></pre></div><p>看看当前的系统的情况：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">top - 10:52:06 up 23:52,  3 users,  load average: 1.03, 0.63, 0.64
+Tasks: 179 total,   3 running, 176 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 64.9 us, 35.1 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  2029168 total,   574820 free,   268292 used,  1186056 buff/cache
+KiB Swap:  1003516 total,  1003516 free,        0 used.  1533672 avail Mem
+
+   PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND
+ 12146 root      20   0   22568   1864      0 R 78.5  0.1   0:33.79 bash
+ 12004 root      20   0   22868   2948    764 R 20.2  0.1  21:19.86 bash
+ ...
+</code></pre></div><p>看到基本上cpu都被这两个进程瓜分了，一个（12004）占用了20%，另外一个（12146）把剩下的80%基本上也占尽了。我们在把12146加入到test控制组，会发生什么样的情况。是各占20%还是共同分享这20%的份额呢？</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">echo 12004 &gt; /sys/fs/cgroup/cpu/test/cgroup.procs
+</code></pre></div><p>再TOP一下查看结果：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">top - 10:59:50 up 1 day, 0 min,  3 users,  load average: 0.85, 1.15, 0.94
+Tasks: 179 total,   3 running, 176 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.8 us,  9.5 sy,  0.0 ni, 78.6 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  2029168 total,   574224 free,   268920 used,  1186024 buff/cache
+KiB Swap:  1003516 total,  1003516 free,        0 used.  1533076 avail Mem
+
+   PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND
+ 12004 root      20   0   22868   2948    764 R 10.3  0.1  22:49.06 bash
+ 12146 root      20   0   22568   1864      0 R 10.0  0.1   6:14.56 bash
+...
+</code></pre></div><p>发现他们是并不是我们想象的，每个各占20%的份额，而是共享这个组内所有的资源。并且，当这些进程fork出的子进程，同样也会被加入到该控制组，共同分享这些份额。</p>
+<h2 id="总结">总结</h2>
+<p>现在大家已经初步认识了cgroup，现在我们稍微做下总结：</p>
+<ul>
+<li>进程的访问资源控制是由内核的各个模块实现的功能</li>
+<li>有多种&quot;控制资源&rdquo;，每种控制由单独的subsystem控制</li>
+<li>通过cgroup达到了进程与访问资源配置进行了关联</li>
+<li>通过 虚拟文件系统 (Virtual File System)，将cgroup暴露给用户态</li>
+<li>每个挂载点，都关联零到多个subsystem，每个挂载点形成的cgroup树，称为hierarchy。</li>
+<li>每个cgroup树都包含了系统上所有的进程，与控制资源的100%。</li>
+</ul>
+<h2 id="参考">参考</h2>
+<p><a href="https://segmentfault.com/a/1190000006917884">cgroup</a></p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">子不语</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-10-17
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/docker/">docker</a>
+          <a href="/tags/cgroup/">cgroup</a>
+          <a href="/tags/linux/">linux</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/2019/11/codecombat%E7%A7%81%E6%9C%8D%E6%90%AD%E5%BB%BA/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Codecombat私服搭建</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/2019/10/%E7%BC%96%E5%86%99%E4%BA%86%E4%B8%80%E4%B8%AAtypora%E4%B8%BB%E9%A2%98/">
+            <span class="next-text nav-default">编写了一个Typora主题</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:hi@gitblog.me" class="iconfont icon-email" title="email"></a>
+  <a href="http://localhost:1313/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">子不语</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.d7b7ada643c9c1a983026e177f141f7363b4640d619caf01d8831a6718cd44ea.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

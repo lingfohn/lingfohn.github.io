@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Docker网络模型单机模拟 - Flow</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="子不语" /><meta name="description" content="kubernetes 网络模型 Kubernetes网络模型设计的一个基础原则是： 每一个Pod都拥有一个独立的IP地址，而且假定所有Pod都在一个可以直接连通的、" /><meta name="keywords" content="gitblog, blog, gitblog.me" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.72.0 with theme even" />
+
+
+<link rel="canonical" href="http://localhost:1313/2018/10/docker%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B%E5%8D%95%E6%9C%BA%E6%A8%A1%E6%8B%9F/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.78f8f17bab244b9ee62ad16480c9584d5fc2db06ae20681d1ca225cefd80767c.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="Docker网络模型单机模拟" />
+<meta property="og:description" content="kubernetes 网络模型 Kubernetes网络模型设计的一个基础原则是： 每一个Pod都拥有一个独立的IP地址，而且假定所有Pod都在一个可以直接连通的、" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/2018/10/docker%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B%E5%8D%95%E6%9C%BA%E6%A8%A1%E6%8B%9F/" />
+<meta property="article:published_time" content="2018-10-19T09:35:38+08:00" />
+<meta property="article:modified_time" content="2019-09-09T09:35:38+08:00" />
+<meta itemprop="name" content="Docker网络模型单机模拟">
+<meta itemprop="description" content="kubernetes 网络模型 Kubernetes网络模型设计的一个基础原则是： 每一个Pod都拥有一个独立的IP地址，而且假定所有Pod都在一个可以直接连通的、">
+<meta itemprop="datePublished" content="2018-10-19T09:35:38&#43;08:00" />
+<meta itemprop="dateModified" content="2019-09-09T09:35:38&#43;08:00" />
+<meta itemprop="wordCount" content="2773">
+
+
+
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Docker网络模型单机模拟"/>
+<meta name="twitter:description" content="kubernetes 网络模型 Kubernetes网络模型设计的一个基础原则是： 每一个Pod都拥有一个独立的IP地址，而且假定所有Pod都在一个可以直接连通的、"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Flow</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">Flow</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Docker网络模型单机模拟</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-10-19 </span>
+        
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#kubernetes-网络模型">kubernetes 网络模型</a></li>
+        <li><a href="#docker的网络基础">Docker的网络基础</a></li>
+        <li><a href="#docker-网络的局限">Docker 网络的局限</a></li>
+        <li><a href="#kubernetes-的网络实现">Kubernetes 的网络实现</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <h3 id="kubernetes-网络模型">kubernetes 网络模型</h3>
+<p><code>Kubernetes</code>网络模型设计的一个<strong>基础原则</strong>是：</p>
+<blockquote>
+<p>每一个Pod都拥有一个独立的IP地址，而且假定所有Pod都在一个可以直接连通的、扁平的网络空间中。所有不管他们是否在同一个Node中，都要求他们可以直接通过对方的IP进行访问。</p>
+</blockquote>
+<p>在Kubernetes的世界里，IP是以Pod为单位进行分配的。一个Pod内部的所有容器共享一个网络堆栈（网络命名空间，包括它们的IP地址、网络设备、配置等都是共享的）。Pod内的容器可以通过<code>localhost</code>来连接对方端口，并且他们共享端口。Pod的可以类比为VM，Pod内的容器可以类比为MV里面的进程。</p>
+<p>kubernetes对集群的网络要求：</p>
+<ul>
+<li>所有的容器都可以在<strong>不用</strong>NAT的方式下同别的容器通信；</li>
+<li>所有节点都可以在<strong>不用</strong>NAT的方式同所有容器通信，反之亦然。</li>
+<li>容器的地址和别人看到的地址是同一个地址。</li>
+</ul>
+<h3 id="docker的网络基础">Docker的网络基础</h3>
+<p>Docker 本身的技术依赖于近几年Linux内核虚拟化技术的发展，所以Docker对Linux内核特性有很强的依赖，现在就模拟Docker的网络的实现。</p>
+<p>首先Docker的网络隔离是通过网络命名空间实现的。</p>
+<h4 id="网络命名空间">网络命名空间</h4>
+<p>为了支持网络协议栈的多个实例，linux在网络空间中引入了网络命名空间（Network Namespace），这些独立的协议栈被隔离到不同的命名空间中。出于不同的命名空间的网络协议栈完全隔离，彼此无法通信，就好像两个“平行宇宙”。</p>
+<p><strong>查看linux的命名空间</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ip netns list
+</code></pre></div><p>可以看到现在我们的机器上并没有创建任何网络命名空间。</p>
+<p><strong>创建两个网络命名空间</strong></p>
+<p>创建两个网络命名空间，来模拟两个容器</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ip netns add ns1
+ip netns add ns2
+</code></pre></div><p>验证：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ip netns list
+ns2
+ns1
+</code></pre></div><p><strong>查看netns里面的网卡信息</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ip netns exec ns1 ip link
+1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+</code></pre></div><p>目前两个网络空间中，只有回环网卡，无法与外界通信。docker利用linux网桥与veth技术实现的docker网络。</p>
+<p><img src="https://ws1.sinaimg.cn/large/9646fcf1ly1fwa62g6lcuj20hu09wa9y.jpg" alt="创建了两个单独的命名空间"></p>
+<h4 id="网桥">网桥</h4>
+<p>首先，linux网桥（bridge）是一个虚拟网络设备，具有网络设备的特征，可以配置IP、MAC地址等，其次，bridge是一个虚拟交换机，和物理交换机具有类似的功能。</p>
+<p><strong>创建网桥</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"># ip link add br0 type bridge 
+# ip addr
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 00:0c:29:95:21:d1 brd ff:ff:ff:ff:ff:ff
+    inet 172.20.11.1/16 brd 172.20.255.255 scope global noprefixroute ens33
+       valid_lft forever preferred_lft forever
+    inet6 fe80::4a62:6914:a81f:54a2/64 scope link noprefixroute 
+       valid_lft forever preferred_lft forever
+3: br0: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN group default qlen 1000
+    link/ether b6:c4:44:72:64:a6 brd ff:ff:ff:ff:ff:ff
+</code></pre></div><p><img src="https://ws1.sinaimg.cn/large/9646fcf1ly1fwa67f37ahj20kh0dht8n.jpg" alt=""></p>
+<h4 id="veth设备对">Veth设备对</h4>
+<p><strong>可以理解为由网线连接起来的两个以太卡</strong></p>
+<p>veth的特点：</p>
+<ul>
+<li>veth和其它的网络设备都一样，一端连接的是内核协议栈。</li>
+<li>veth设备是成对出现的，另一端两个设备彼此相连</li>
+<li>一个设备收到协议栈的数据发送请求后，会将数据发送到另一个设备上去。</li>
+</ul>
+<p>docker 利用veth设备对将容器网络与bridge相连接</p>
+<p><strong>创建veth设备对</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"># ip link add veth10 type veth peer name veth11
+# ip link add veth20 type veth peer name veth21
+</code></pre></div><p>验证：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"># ip link 
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+    link/ether 00:0c:29:95:21:d1 brd ff:ff:ff:ff:ff:ff
+3: br0: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether b6:c4:44:72:64:a6 brd ff:ff:ff:ff:ff:ff
+4: veth11@veth10: &lt;BROADCAST,MULTICAST,M-DOWN&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether 86:57:d7:7a:7f:68 brd ff:ff:ff:ff:ff:ff
+5: veth10@veth11: &lt;BROADCAST,MULTICAST,M-DOWN&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether c6:78:7f:89:20:aa brd ff:ff:ff:ff:ff:ff
+6: veth21@veth20: &lt;BROADCAST,MULTICAST,M-DOWN&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether e6:65:64:55:97:7a brd ff:ff:ff:ff:ff:ff
+7: veth20@veth21: &lt;BROADCAST,MULTICAST,M-DOWN&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether ea:22:4d:6f:a3:da brd ff:ff:ff:ff:ff:ff
+
+</code></pre></div><p>可以看到，veth设备对都是成对出现，刚刚我们创建了四个网络设备，<code>veth10</code> 和 <code>veth11</code>、  <code>veth20</code> 和<code>veth21</code>。</p>
+<p><img src="https://ws1.sinaimg.cn/large/9646fcf1ly1fwa69mjhyuj20ke0ftaa5.jpg" alt=""></p>
+<p>我们现在将veth10、veth20绑定到网桥上，veth11分配到命名空间ns1，veth21分配给命名空间ns2。</p>
+<p><strong>将veth10、veth20连接到网桥上</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ip link set dev veth10 master br0
+ip link set dev veth20 master br0
+</code></pre></div><p>验证：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">bridge link
+5: veth10 state DOWN @veth11: &lt;BROADCAST,MULTICAST&gt; mtu 1500 master br0 state disabled priority 32 cost 2 
+7: veth20 state DOWN @veth21: &lt;BROADCAST,MULTICAST&gt; mtu 1500 master br0 state disabled priority 32 cost 2 
+</code></pre></div><p>![image-20181016170532141](/Users/lingfohn/Library/Application Support/typora-user-images/image-20181016170532141.png)</p>
+<p><strong>另一端分别分配给命名空间ns1与ns2</strong></p>
+<p>这里模拟两个容器。</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ip link set dev veth11 netns ns1
+ip link set dev veth21 netns ns2
+</code></pre></div><p>验证：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ip link show
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+    link/ether 00:0c:29:95:21:d1 brd ff:ff:ff:ff:ff:ff
+3: br0: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether c6:78:7f:89:20:aa brd ff:ff:ff:ff:ff:ff
+5: veth10@if4: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop master br0 state DOWN mode DEFAULT group default qlen 1000
+    link/ether c6:78:7f:89:20:aa brd ff:ff:ff:ff:ff:ff link-netnsid 0
+7: veth20@if6: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop master br0 state DOWN mode DEFAULT group default qlen 1000
+    link/ether ea:22:4d:6f:a3:da brd ff:ff:ff:ff:ff:ff link-netnsid 1
+</code></pre></div><p>现在可以看到，VM的命名空间中，少了两个网卡，因为他们被分配给了别的命名空间。</p>
+<p>到任意一个命名空间中，查看网卡信息。</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ip netns exec ns1 ip link 
+1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+4: veth11@if5: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether 86:57:d7:7a:7f:68 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+</code></pre></div><p>现在网络拓扑图类似于：</p>
+<p>![image-20181016170629225](/Users/lingfohn/Library/Application Support/typora-user-images/image-20181016170629225.png)</p>
+<h4 id="配置网络地址">配置网络地址</h4>
+<p>将各个网卡配置上IP地址。</p>
+<p><strong>ns1 分配192.168.1.101/24</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ip link set veth10 up
+ip netns exec ns1 bash
+ip addr add 192.168.1.101/24 dev veth11
+ip link set veth11 up
+ip addr 
+exit
+</code></pre></div><p>验证：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ip addr
+1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+4: veth11@if5: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu 1500 qdisc noqueue state LOWERLAYERDOWN group default qlen 1000
+    link/ether 86:57:d7:7a:7f:68 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 192.168.1.101/24 scope global veth11
+       valid_lft forever preferred_lft forever
+</code></pre></div><p><strong>ns2 分配192.168.1.102/24</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ip link set veth20 up
+ip netns exec ns2 bash
+ip addr add 192.168.1.102/24 dev veth21
+ip link set veth21 up
+exit
+</code></pre></div><p><strong>br0分配192.168.1.1/24</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ip addr add 192.168.1.1/24 dev br0
+ip link set br0 up
+</code></pre></div><p>现在网络拓扑图类似于：</p>
+<p><img src="https://ws1.sinaimg.cn/large/9646fcf1ly1fwa71ifqr7j20l00fzaa7.jpg" alt=""></p>
+<h4 id="测试连通性">测试连通性</h4>
+<p>在VM中访问ns1与ns2</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ping -c 4 192.168.1.101
+ping -c 4 192.168.1.102
+</code></pre></div><p>在ns1中访问ns2与VM</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ip netns exec ns1 bash
+ping -c 4 192.168.1.102
+ping -c 4 192.168.1.1
+exit
+</code></pre></div><h3 id="docker-网络的局限">Docker 网络的局限</h3>
+<p>从上面的可以看出，docker的网络模型是单主机的，没有考虑多主机互联的网络方案，这个并不满足Kubernetes的网络要求。</p>
+<ul>
+<li>在同一个物理主机的所有容器，他们的网络是互通的。</li>
+<li>若Pod处于不同服务器，容器间的则无法访问。</li>
+<li>Pod内的容器，也无法访问到外部的Node节点。</li>
+</ul>
+<h3 id="kubernetes-的网络实现">Kubernetes 的网络实现</h3>
+<p>kubernetes 网络设计主要致力于解决以下场景。</p>
+<ol>
+<li>容器到容器间的通信</li>
+<li>抽象的Pod到Pod间的通信</li>
+<li>Pod到Service之间的通信</li>
+<li>集群外部与内部组件之间的通信</li>
+</ol>
+<p>先着重考虑第一二个场景。</p>
+<p><strong>容器到容器间的通信</strong></p>
+<p>这里主要指同一个Pod内的容器间通信，因为同一个Pod内的容器共享一套网络协议栈，所以他们可以通过localhost进行通信，就和他们在同一台机器上一样。</p>
+<p><strong>抽象Pod间的通信</strong></p>
+<p>这个要分两种情况，</p>
+<p><strong>1. Pod在同一台物理机</strong></p>
+<p>因为他们是连接同一个网桥（docker0），所以他们之间是互通的。就类似于连接到同一台交换机上面的不同主机间的通信类似。</p>
+<p><strong>2. Pod在不同物理机上面</strong></p>
+<p><img src="https://ws1.sinaimg.cn/large/9646fcf1ly1fwa95p1a1jj21220ngn0c.jpg" alt=""></p>
+<p>由于Pod1与Pod3处于不同的网段，他们之间并不能互通，他们之间的通信需要经过如下。</p>
+<p>pod1的eth0—&gt;Node1的docker0 —&gt;Node1的eth0—&gt;Node2的eth0&ndash;&gt; node2的docker0—&gt;pod3的eth0</p>
+<p>但是pod1并不知道pod3在那里，所以kubernetes的网络插件实现需要解决一下两个问题：</p>
+<ul>
+<li>对整个Kubernetes集群内的Pod的IP地址分配进行管理，不能有冲突。</li>
+<li>找到一种方法，将Pod的IP与所在的Node的IP关联起来，通过这个关联让Pod可以互相访问。</li>
+</ul>
+<p>kubernetes网络并没有给出官方的方案，只是定义了接口CNI，并没有给出实现，在kubernetes社区有很多实现方案（比如Flannel、Open vSwitch、calico）以后的分享就会对各个方案进行讲解。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">子不语</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-09-09
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/2018/11/%E7%90%86%E8%A7%A3flannel%E7%BD%91%E7%BB%9C%E6%8F%92%E4%BB%B6%E5%8E%9F%E7%90%86/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">理解flannel网络插件原理</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/2018/10/%E4%BD%BF%E7%94%A8kubeadm-%E5%AE%89%E8%A3%85kubernetes1.12/">
+            <span class="next-text nav-default">使用kubeadm 安装kubernetes1.12</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:hi@gitblog.me" class="iconfont icon-email" title="email"></a>
+  <a href="http://localhost:1313/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">子不语</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.d7b7ada643c9c1a983026e177f141f7363b4640d619caf01d8831a6718cd44ea.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

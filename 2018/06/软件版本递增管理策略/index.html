@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>软件版本递增管理策略 - Flow</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="子不语" /><meta name="description" content="语义化版本命名格式 V主版本号.次版本号.修订版本号 示例：v1.12.3 一些约定 主版本号：具有相同名称但不同主版本号的程序集不可互换。例如，这" /><meta name="keywords" content="gitblog, blog, gitblog.me" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.72.0 with theme even" />
+
+
+<link rel="canonical" href="http://localhost:1313/2018/06/%E8%BD%AF%E4%BB%B6%E7%89%88%E6%9C%AC%E9%80%92%E5%A2%9E%E7%AE%A1%E7%90%86%E7%AD%96%E7%95%A5/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.78f8f17bab244b9ee62ad16480c9584d5fc2db06ae20681d1ca225cefd80767c.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="软件版本递增管理策略" />
+<meta property="og:description" content="语义化版本命名格式 V主版本号.次版本号.修订版本号 示例：v1.12.3 一些约定 主版本号：具有相同名称但不同主版本号的程序集不可互换。例如，这" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/2018/06/%E8%BD%AF%E4%BB%B6%E7%89%88%E6%9C%AC%E9%80%92%E5%A2%9E%E7%AE%A1%E7%90%86%E7%AD%96%E7%95%A5/" />
+<meta property="article:published_time" content="2018-06-05T10:33:33+08:00" />
+<meta property="article:modified_time" content="2019-09-05T17:08:17+08:00" />
+<meta itemprop="name" content="软件版本递增管理策略">
+<meta itemprop="description" content="语义化版本命名格式 V主版本号.次版本号.修订版本号 示例：v1.12.3 一些约定 主版本号：具有相同名称但不同主版本号的程序集不可互换。例如，这">
+<meta itemprop="datePublished" content="2018-06-05T10:33:33&#43;08:00" />
+<meta itemprop="dateModified" content="2019-09-05T17:08:17&#43;08:00" />
+<meta itemprop="wordCount" content="881">
+
+
+
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="软件版本递增管理策略"/>
+<meta name="twitter:description" content="语义化版本命名格式 V主版本号.次版本号.修订版本号 示例：v1.12.3 一些约定 主版本号：具有相同名称但不同主版本号的程序集不可互换。例如，这"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Flow</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">Flow</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">软件版本递增管理策略</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-06-05 </span>
+        
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#语义化版本命名格式">语义化版本命名格式</a></li>
+    <li><a href="#一些约定">一些约定</a></li>
+    <li><a href="#版本管理策略">版本管理策略</a></li>
+    <li><a href="#开发与版本迭代模式">开发与版本迭代模式</a>
+      <ul>
+        <li><a href="#当前情况">当前情况</a></li>
+        <li><a href="#版本迭代模式">版本迭代模式</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <h2 id="语义化版本命名格式">语义化版本命名格式</h2>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">V主版本号.次版本号.修订版本号
+</code></pre></div><p>示例：v1.12.3</p>
+<h2 id="一些约定">一些约定</h2>
+<p><strong>主版本号</strong>：具有相同名称但不同主版本号的程序集不可互换。例如，这适用于对产品的大量重写，这些重写使得无法实现向后兼容性。</p>
+<p><strong>次版本号</strong>：如果两个程序集的名称和主版本号相同，而次版本号不同，这指示显著增强，但照顾到了向后兼容性。例如，这适用于产品的修正版或完全向后兼容的新版本。</p>
+<p><strong>修订版本号</strong>：如果主版本号与次版本号相同，而修订版本号不同，这指示未添加新功能，只做了问题修订。例如，线上问题的热修复。</p>
+<h2 id="版本管理策略">版本管理策略</h2>
+<ul>
+<li>项目初版本是，版本号可以为v1.0.0，对于重构的项目，版本号可以为v2.0.0，依次递增。</li>
+<li>当项目在进行了局部修改或bug修改时，主版本号与次版本号都不变，修正版本号加1。</li>
+<li>当项目在原有基础上增加部分功能时，主版本号不变，次版本号加1，修正版本号复位为0。</li>
+<li>当项目进行了重大修改，局部修正累积较多，而导致项目整体发生全局变化时，主版本号加 1（一般为项目重构，新老项目并行）。</li>
+<li><code>项目版本</code>对应了代码里的tag。</li>
+<li>对于前后端分离项目，项目的版本一般与前端的版本相对应。</li>
+</ul>
+<h2 id="开发与版本迭代模式">开发与版本迭代模式</h2>
+<h3 id="当前情况">当前情况</h3>
+<ol>
+<li>项目一般有两套运行环境，<strong>正式环境</strong>与<strong>测试环境</strong>，一般在测试环境运行一段时间没问题后，再上线到正式环境。</li>
+<li>开发环境一般在本地开发测试环境。</li>
+<li>项目开发为敏捷开发模式，当前阶段开发完成后，产品上线到测试环境，期间有一段测试时期（一般为一周），没问题后上线到正式环境，紧接着进行下一期的迭代，期间若正式环境有问题则及时进行修复。</li>
+</ol>
+<h3 id="版本迭代模式">版本迭代模式</h3>
+<ol>
+<li>假如<strong>正式环境</strong>上的项目运行版本是v1.2.4</li>
+<li>当前开发中的版本为v1.3.0</li>
+<li>如果<strong>正式环境</strong>有bug，需要热修复；checkout出v1.2.4版本的代码，进行修复，上线到<strong>测试环境</strong>，版本号定为v1.2.5,若测试通过后，上线到<strong>正式环境</strong>，版本号为v1.2.5</li>
+<li>继续进行新需求开发，开发完成后，发布到<strong>测试环境</strong>,版本号为v1.3.0</li>
+<li>进行测试，如果有问题，进行代码修改，然后迭代到v1.3.2，没有问题，上线到正式环境，版本为v1.3.2</li>
+<li>进行下一阶段的需求编写，开发版本为v1.4.0</li>
+</ol>
+<p>参考：<a href="https://semver.org/lang/zh-CN/">语义化版本</a></p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">子不语</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-09-05
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/2018/06/vue%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB-%E7%AC%AC%E4%B8%80%E4%B8%AAvue%E9%A1%B5%E9%9D%A2/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">VUE技术分享   第一个VUE页面</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/2018/05/restful-api-%E6%8E%A5%E5%8F%A3%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83/">
+            <span class="next-text nav-default">Restful API 接口设计规范</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:hi@gitblog.me" class="iconfont icon-email" title="email"></a>
+  <a href="http://localhost:1313/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">子不语</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.d7b7ada643c9c1a983026e177f141f7363b4640d619caf01d8831a6718cd44ea.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

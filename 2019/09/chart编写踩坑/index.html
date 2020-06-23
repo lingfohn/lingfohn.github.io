@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Chart编写踩坑 - Flow</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="子不语" /><meta name="description" content="常用调试命令 --dry-run 渲染模板，但是不安装chart --debug Debug 模式 内置对象 Release对象 这个对象描述了 release 本身。 对象名 含义 Release.Name release 名称 Release.Time release 的时间（？什么时间" /><meta name="keywords" content="gitblog, blog, gitblog.me" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.72.0 with theme even" />
+
+
+<link rel="canonical" href="http://localhost:1313/2019/09/chart%E7%BC%96%E5%86%99%E8%B8%A9%E5%9D%91/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.78f8f17bab244b9ee62ad16480c9584d5fc2db06ae20681d1ca225cefd80767c.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="Chart编写踩坑" />
+<meta property="og:description" content="常用调试命令 --dry-run 渲染模板，但是不安装chart --debug Debug 模式 内置对象 Release对象 这个对象描述了 release 本身。 对象名 含义 Release.Name release 名称 Release.Time release 的时间（？什么时间" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/2019/09/chart%E7%BC%96%E5%86%99%E8%B8%A9%E5%9D%91/" />
+<meta property="article:published_time" content="2019-09-06T14:41:25+08:00" />
+<meta property="article:modified_time" content="2019-09-06T14:41:25+08:00" />
+<meta itemprop="name" content="Chart编写踩坑">
+<meta itemprop="description" content="常用调试命令 --dry-run 渲染模板，但是不安装chart --debug Debug 模式 内置对象 Release对象 这个对象描述了 release 本身。 对象名 含义 Release.Name release 名称 Release.Time release 的时间（？什么时间">
+<meta itemprop="datePublished" content="2019-09-06T14:41:25&#43;08:00" />
+<meta itemprop="dateModified" content="2019-09-06T14:41:25&#43;08:00" />
+<meta itemprop="wordCount" content="1244">
+
+
+
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Chart编写踩坑"/>
+<meta name="twitter:description" content="常用调试命令 --dry-run 渲染模板，但是不安装chart --debug Debug 模式 内置对象 Release对象 这个对象描述了 release 本身。 对象名 含义 Release.Name release 名称 Release.Time release 的时间（？什么时间"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Flow</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">Flow</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Chart编写踩坑</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-09-06 </span>
+        
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#常用调试命令">常用调试命令</a></li>
+    <li><a href="#内置对象">内置对象</a>
+      <ul>
+        <li><a href="#release对象">Release对象</a></li>
+        <li><a href="#value对象">Value对象</a></li>
+        <li><a href="#chart对象">Chart对象</a></li>
+        <li><a href="#files-对象">Files 对象</a></li>
+        <li><a href="#capabilities">Capabilities</a></li>
+      </ul>
+    </li>
+    <li><a href="#value规则">Value规则</a>
+      <ul>
+        <li><a href="#value的来源">value的来源：</a></li>
+      </ul>
+    </li>
+    <li><a href="#模板函数与管道">模板函数与管道</a>
+      <ul>
+        <li><a href="#模板函数语法">模板函数语法</a></li>
+        <li><a href="#管道语法">管道语法</a></li>
+        <li><a href="#default函数">default函数</a></li>
+        <li><a href="#运算符函数">运算符函数</a></li>
+      </ul>
+    </li>
+    <li><a href="#流程控制">流程控制</a>
+      <ul>
+        <li><a href="#控制结构">控制结构</a></li>
+        <li><a href="#使用命名模板">使用命名模板</a></li>
+        <li><a href="#ifelse">if/else</a></li>
+        <li><a href="#控制空格">控制空格</a></li>
+        <li><a href="#with作用域">with作用域</a></li>
+        <li><a href="#range-语句">range 语句</a></li>
+      </ul>
+    </li>
+    <li><a href="#变量">变量</a>
+      <ul>
+        <li><a href="#语法">语法</a></li>
+        <li><a href="#与range一同使用">与range一同使用</a></li>
+        <li><a href="#全局变量根上下文">全局变量根上下文$</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <h2 id="常用调试命令">常用调试命令</h2>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">--dry-run  渲染模板，但是不安装chart
+--debug Debug 模式
+</code></pre></div><h2 id="内置对象">内置对象</h2>
+<h3 id="release对象">Release对象</h3>
+<p>这个对象描述了 release 本身。</p>
+<table>
+<thead>
+<tr>
+<th>对象名</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Release.Name</td>
+<td>release 名称</td>
+</tr>
+<tr>
+<td>Release.Time</td>
+<td>release 的时间（？什么时间）</td>
+</tr>
+<tr>
+<td>Release.Namespace</td>
+<td>release的命名空间</td>
+</tr>
+<tr>
+<td>Release.Service</td>
+<td>release的服务名称（始终是Tiller）</td>
+</tr>
+<tr>
+<td>Release.Revision</td>
+<td>release的revision号，从1开始，每upgrade一次增加一个</td>
+</tr>
+<tr>
+<td>Release.IsUpgrade</td>
+<td>当前操作是否是升级或回滚</td>
+</tr>
+<tr>
+<td>Release.IsInstall</td>
+<td>当前操作是否是安装</td>
+</tr>
+</tbody>
+</table>
+<h3 id="value对象">Value对象</h3>
+<p>从 <code>values.yaml</code> 文件和用户提供的文件传入模板的值。</p>
+<h3 id="chart对象">Chart对象</h3>
+<p><code>Chart.yaml</code> 文件的内容。任何数据 Chart.yaml 将在这里访问。</p>
+<h3 id="files-对象">Files 对象</h3>
+<p>这提供对 chart 中所有非特殊文件的访问。虽然无法使用它来访问模板，但可以使用它来访问 chart 中的其他文件。</p>
+<h3 id="capabilities">Capabilities</h3>
+<p>这提供了关于 Kubernetes 集群支持的功能的信息。</p>
+<table>
+<thead>
+<tr>
+<th>对象名</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Capabilities.APIVersions</td>
+<td>一组版本信息</td>
+</tr>
+<tr>
+<td>Capabilities.APIVersions.Has $version</td>
+<td>指示是否在群集上启用版本（<code>batch/v1</code>）</td>
+</tr>
+<tr>
+<td>Capabilities.KubeVersion</td>
+<td>提供了查找 Kubernetes 版本的方法。</td>
+</tr>
+<tr>
+<td>Capabilities.TillerVersion</td>
+<td>提供了查找 Tiller 版本的方法。它具有以下值：SemVer，GitCommit，和 GitTreeState。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="value规则">Value规则</h2>
+<h3 id="value的来源">value的来源：</h3>
+<ol>
+<li>chart 中的 <code>values.yaml</code> 文件</li>
+<li>父 chart 的 <code>values.yaml</code> 文件</li>
+<li>helm install 或 helm upgrade 的 - f 标志传入文件</li>
+<li>通过 <code>--set</code>（例如 <code>helm install --set foo=bar ./mychart</code>）</li>
+</ol>
+<blockquote>
+<p>上面的列表按照特定的顺序排列：values.yaml 在默认情况下，父级 chart 的可以覆盖该默认级别，而该 chart values.yaml 又可以被用户提供的 values 文件覆盖，而该文件又可以被 &ndash;set 参数覆盖。</p>
+</blockquote>
+<h2 id="模板函数与管道">模板函数与管道</h2>
+<h3 id="模板函数语法">模板函数语法</h3>
+<p>有时我们想要转换这些数据，使得他们对我们来说更有用。</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">functionName arg1 arg2...
+</code></pre></div><h3 id="管道语法">管道语法</h3>
+<p>管道是一个链接在一起的一系列模板命令的工具，以紧凑地表达一系列转换。换句话说，管道是按顺序完成几件事情的有效方式。</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">.Values.favorite.drink | quote
+</code></pre></div><h3 id="default函数">default函数</h3>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">drink: {{.Values.favorite.drink | default &#34;tea&#34; | quote}}
+</code></pre></div><h3 id="运算符函数">运算符函数</h3>
+<p>对于模板，运算符（eq，ne，lt，gt，and，or 等等）都是已实现的功能。在管道中，运算符可以用圆括号（<code>(</code> 和 <code>)</code>）分组。</p>
+<h2 id="流程控制">流程控制</h2>
+<h3 id="控制结构">控制结构</h3>
+<ul>
+<li>
+<p><code>if/else</code> 用于创建条件块</p>
+</li>
+<li>
+<p><code>with</code> 指定范围</p>
+</li>
+<li>
+<p><code>range</code>，它提供了一个 “for each” 风格的循环</p>
+</li>
+</ul>
+<h3 id="使用命名模板">使用命名模板</h3>
+<ul>
+<li><code>define</code> 在模板中声明一个新的命名模板</li>
+<li><code>template</code> 导入一个命名模板</li>
+<li><code>block</code> 声明了一种特殊的可填写模板区域</li>
+</ul>
+<h3 id="ifelse">if/else</h3>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">{{if PIPELINE}}
+  # Do something
+{{else if OTHER PIPELINE}}
+  # Do something else
+{{else}}
+  # Default case
+{{end}}
+</code></pre></div><p>如果值为如下情况，则管道评估为 false。</p>
+<ul>
+<li>一个布尔型的假</li>
+<li>一个数字零</li>
+<li>一个空的字符串</li>
+<li>一个 <code>nil</code>（空或 null）</li>
+<li>一个空的集合（<code>map</code>，<code>slice</code>，<code>tuple</code>，<code>dict</code>，<code>array</code>）</li>
+</ul>
+<h3 id="控制空格">控制空格</h3>
+<p><code>{{-</code>（添加了破折号和空格）表示应该将格左移，而 <code>-}}</code> 意味着应该删除右空格。注意！换行符也是空格！</p>
+<h3 id="with作用域">with作用域</h3>
+<p>它控制着变量作用域。回想一下，<code>.</code> 是对当前范围的引用。因此，<code>.Values</code> 告诉模板在当前范围中查找 <code>Values</code> 对象。</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">{{with PIPELINE}}
+  # restricted scope
+{{end}}
+</code></pre></div><p>范围可以改变。with 可以允许将当前范围（<code>.</code>）设置为特定的对象。</p>
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">apiVersion</span><span class="p">:</span><span class="w"> </span>v1<span class="w">
+</span><span class="w"></span><span class="k">kind</span><span class="p">:</span><span class="w"> </span>ConfigMap<span class="w">
+</span><span class="w"></span><span class="k">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="k">name</span><span class="p">:</span><span class="w"> </span>{{.Release.Name}}-configmap<span class="w">
+</span><span class="w"></span><span class="k">data</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="k">myvalue</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Hello World&#34;</span><span class="w">
+</span><span class="w">  </span>{{- with<span class="w"> </span>.Values.favorite}}<span class="w">
+</span><span class="w">  </span><span class="k">drink</span><span class="p">:</span><span class="w"> </span>{{.drink<span class="w"> </span>|<span class="w"> </span>default<span class="w"> </span><span class="s2">&#34;tea&#34;</span><span class="w"> </span>|<span class="w"> </span>quote}}<span class="w">
+</span><span class="w">  </span><span class="k">food</span><span class="p">:</span><span class="w"> </span>{{.food<span class="w"> </span>|<span class="w"> </span>upper<span class="w"> </span>|<span class="w"> </span>quote}}<span class="w">
+</span><span class="w">  </span>{{- end}}<span class="w">
+</span></code></pre></div><p><code>{{end}}</code> 后 <code>.</code> 复位其先前的范围。</p>
+<blockquote>
+<p>但是请注意！在受限范围内，此时将无法从父范围访问其他对象。</p>
+</blockquote>
+<p><strong>YAML 语法</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">|- 声明一个多行字符串
+</code></pre></div><h3 id="range-语句">range 语句</h3>
+<p>value.yaml</p>
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">favorite</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="k">drink</span><span class="p">:</span><span class="w"> </span>coffee<span class="w">
+</span><span class="w">  </span><span class="k">food</span><span class="p">:</span><span class="w"> </span>pizza<span class="w">
+</span><span class="w"></span><span class="k">pizzaToppings</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span>- mushrooms<span class="w">
+</span><span class="w">  </span>- cheese<span class="w">
+</span><span class="w">  </span>- peppers<span class="w">
+</span><span class="w">  </span>- onions<span class="w">
+</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{.Release.Name}}-configmap
+data:
+  myvalue: &#34;Hello World&#34;
+  {{- with .Values.favorite}}
+  drink: {{.drink | default &#34;tea&#34; | quote}}
+  food: {{.food | upper | quote}}
+  {{- end}}
+  toppings: |-
+    {{- range .Values.pizzaToppings}}
+    - {{. | title | quote}}
+    {{- end}}
+</code></pre></div><h2 id="变量">变量</h2>
+<h3 id="语法">语法</h3>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">{{- $relname := .Release.Name -}}
+</code></pre></div><h3 id="与range一同使用">与range一同使用</h3>
+<h4 id="遍历list">遍历list</h4>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">    {{- range $index, $topping := .Values.pizzaToppings}}
+      {{$index}}: {{ $topping }}
+    {{- end}}
+</code></pre></div><h4 id="遍历map">遍历map</h4>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">  {{- range $key, $val := .Values.favorite}}
+  {{$key}}: {{ $val | quote }}
+  {{- end}}
+</code></pre></div><h3 id="全局变量根上下文">全局变量根上下文$</h3>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$.Chart.Name
+</code></pre></div>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">子不语</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-09-06
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/2019/09/redis%E7%B3%BB%E5%88%97-01-docker-%E5%AE%89%E8%A3%85redis-%E4%BB%A5%E5%8F%8A%E9%85%8D%E7%BD%AE%E8%BF%9E%E6%8E%A5/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">[ redis系列 ] 01| docker 安装redis 以及配置连接</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/2019/09/cobra-%E5%8C%85%E4%BB%8B%E7%BB%8D/">
+            <span class="next-text nav-default">Cobra 包介绍</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:hi@gitblog.me" class="iconfont icon-email" title="email"></a>
+  <a href="http://localhost:1313/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">子不语</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.d7b7ada643c9c1a983026e177f141f7363b4640d619caf01d8831a6718cd44ea.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

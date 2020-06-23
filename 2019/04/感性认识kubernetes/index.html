@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>感性认识Kubernetes - Flow</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="子不语" /><meta name="description" content="kubernetes 名字太长 首先吐槽一下，Kubernetes这个项目名字，实在是太长了。其实kubernetes 可以简写k8s，有一个有趣的知识点，为什么简" /><meta name="keywords" content="gitblog, blog, gitblog.me" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.72.0 with theme even" />
+
+
+<link rel="canonical" href="http://localhost:1313/2019/04/%E6%84%9F%E6%80%A7%E8%AE%A4%E8%AF%86kubernetes/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.78f8f17bab244b9ee62ad16480c9584d5fc2db06ae20681d1ca225cefd80767c.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="感性认识Kubernetes" />
+<meta property="og:description" content="kubernetes 名字太长 首先吐槽一下，Kubernetes这个项目名字，实在是太长了。其实kubernetes 可以简写k8s，有一个有趣的知识点，为什么简" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/2019/04/%E6%84%9F%E6%80%A7%E8%AE%A4%E8%AF%86kubernetes/" />
+<meta property="article:published_time" content="2019-04-26T09:14:42+08:00" />
+<meta property="article:modified_time" content="2019-09-09T09:14:42+08:00" />
+<meta itemprop="name" content="感性认识Kubernetes">
+<meta itemprop="description" content="kubernetes 名字太长 首先吐槽一下，Kubernetes这个项目名字，实在是太长了。其实kubernetes 可以简写k8s，有一个有趣的知识点，为什么简">
+<meta itemprop="datePublished" content="2019-04-26T09:14:42&#43;08:00" />
+<meta itemprop="dateModified" content="2019-09-09T09:14:42&#43;08:00" />
+<meta itemprop="wordCount" content="9396">
+
+
+
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="感性认识Kubernetes"/>
+<meta name="twitter:description" content="kubernetes 名字太长 首先吐槽一下，Kubernetes这个项目名字，实在是太长了。其实kubernetes 可以简写k8s，有一个有趣的知识点，为什么简"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Flow</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">Flow</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">感性认识Kubernetes</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-04-26 </span>
+        
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#kubernetes-名字太长">kubernetes 名字太长</a></li>
+    <li><a href="#k8s-是什么是做什么用的">K8s 是什么，是做什么用的？</a></li>
+    <li><a href="#从itil走向devops">从ITIL走向DevOps</a></li>
+    <li><a href="#k8s的-hello-world">K8s的 Hello World</a></li>
+    <li><a href="#这是怎么实现的">这是怎么实现的</a></li>
+    <li><a href="#kubernetes-这个名字起挺欠揍的">Kubernetes 这个名字起挺欠揍的</a></li>
+    <li><a href="#k8s-歌者般的存在">K8s 歌者般的存在</a></li>
+    <li><a href="#深度解密原来你是这样的k8s">深度解密，原来你是这样的K8s</a></li>
+    <li><a href="#用编程的方式去编排应用">用编程的方式去编排应用</a></li>
+    <li><a href="#我是谁我从哪里来将到哪里去">我是谁？我从哪里来？将到哪里去？</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <h2 id="kubernetes-名字太长">kubernetes 名字太长</h2>
+<p>首先吐槽一下，Kubernetes这个项目名字，实在是太长了。其实kubernetes 可以简写k8s，有一个有趣的知识点，为什么简写为k8s？因为k与s之间恰好有8个字母，可能官方项目人员也觉得这个名字起的太长了，所以就给了这么一个简写。以下我们都把Kubernetes简写为k8s。大家不要看它的名字长，就认为k8s太复杂，恰恰相反，k8s的整体架构与核心原理可谓是非常简单。</p>
+<h2 id="k8s-是什么是做什么用的">K8s 是什么，是做什么用的？</h2>
+<p>我们先对k8s有个感性的认识。它是什么，做什么用的？首先我们思考一下三个场景。</p>
+<p><strong>1. 如果一个业务访问量突然提升，我们需要紧急扩展10个应用节点，在我们公司需要多快多久？</strong></p>
+<p>正常情况下，我们要提交扩容申请，然后运维创建机器，分配资源（IP，硬盘等），初始化环境，然后发布应用，然后手工配置代理，我估计最快也需要一天的时间，当然是开发、运维、测试等人员在加班的情况下才能完成。</p>
+<p>在K8s的世界里，这只需要几秒钟的时间，只需要你修改一个参数配置值（将副本数加10），然后执行:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kubectl apply 你要扩容的应用
+</code></pre></div><p>K8s就会自动的为你创建新的应用节点，以实现自动化扩容的目的。</p>
+<p><strong>2. 如果一个应用因为内存溢出挂掉了，我们应该怎么处理？</strong></p>
+<p>首先健康检测系统捕捉到这个故障，然后成功地通知到了应用业务负责人。应用负责人通过Tone的应用监控页面，确认的确是应用挂掉了，然后通过Tone果断重启，应用恢复。这当然是在理想的情况下，现实情况可能出现应用未配置健康检测、应用负责人收到告警但是没有及时响应等情况（大半夜的给我发告警）。</p>
+<p>在K8s的世界里，如果应用异常退出了，它会第一时间检测到，然后进行重启操作（可以看出，无论是多么牛逼的公司，多么牛逼的技术，恢复故障的手段首先都是重启），保证你的应用永远可用。</p>
+<p>K8s 会提供一种应用自愈的能力，来保证应用的可用性。</p>
+<p><strong>3. 再极端一点，如果一台物理机挂掉了，上面的虚拟机全部不能用了，我们公司会怎么去处理？</strong></p>
+<p>如果出现物理机挂掉了，上面运行的虚拟机都会受到牵连。只能通过运维的手工操作，在其它物理机上面创建虚拟机、迁移应用、恢复故障。现在我们说说很轻松，但是实际操作起来却无比复杂与繁琐。</p>
+<p>类似的情况下，假如K8s某个计算节点挂掉了，那么运行在上面应用也会收到影响，接下来K8s会自动迁移应用到其它的计算节点上面，自动恢复。</p>
+<p>K8s给我们提供的自愈能力，不仅仅是应用重启这一种。</p>
+<p><em><strong>可以看出，K8s不仅提供了应用运行环境，更是一套具备一系列的自动化运维与应用自愈能力的平台</strong></em></p>
+<h2 id="从itil走向devops">从ITIL走向DevOps</h2>
+<p>从上面的对比来看，你可能会感觉我在diss公司的技术与运维能力。恰恰相反，我们公司的技术尤其是运维这一块，是我了解到的公司里面做的比较好的。无论是Tone、Tops、OA、JIRA、堡垒机、vmware vsphere等这一切了公司的基础设施，包括一系列的流程、一系列的规范、还有标准化等都体现了我们公司的技术水平与积累。这一切都是不断发展、不断试错的结果。</p>
+<p>但是企业技术架构的不断革新，推动着IT运维模式、运维体系需要从稳态向敏态转变。</p>
+<p>不知道大家有没有听说过一个词叫<strong>星轨</strong>。说是新浪微博衡量服务器抗压能力的新单位。</p>
+<blockquote>
+<p>1星轨指1位一线明星出轨，这个热点产生的瞬时流量。同理8星轨是指8位一线明星同时出轨产生的瞬时流量。</p>
+</blockquote>
+<p>据说新浪微博现在的处理能力能达到8星轨。</p>
+<p>看过之前的一些文章介绍过，之前有某文姓明星出轨，这个新闻热点产生的巨大的流量，远超微博的处理能力，将新浪微博的服务器压垮，上百人半夜起来加班。后来也出现过微博压垮的情况，新浪的工程师不断优化系统架构与基础设施。才有现在他们敢宣称服务的可用性能够抗过8星轨（毕竟谁都不想大晚上的起来加班）。</p>
+<p>之前新浪的运维模式也是流程为主，从设备申请-&gt;入CMDB-&gt;服务器上架-&gt;环境准备-&gt;服务部署-&gt;应用下线-&gt;资源回收。如果新浪微博还是采用这样的模式，不在大半夜爬起来加班才怪，谁能预料到哪位明星会在什么时候出轨？</p>
+<p>这就是ITIL与Devops两种模式的区别。</p>
+<blockquote>
+<p>**ITIL强调流程：**以ITIL理念为核心的各种ITSM系统无不将运维操作流程化。事件管理、问题管理、变更管理、配置管理，大家都按流程办事，杜绝一切拍脑袋决策和盲目操作。
+**ITIL强调规范：**运维人员按组织依据流程进行各种规范的运维操作，约束本身是为了确保大家的行为不要偏离方向，少犯错误。
+**ITIL强调分工：**运维人员按技能进行有效的分工，有人负责服务台的一线响应，有人负责二线的事件和问题处理，有人负责配置管理，有人负责变更审批等等。运维团队内部实现各司其职，分工协作。</p>
+</blockquote>
+<p>这种管理机制在IOE技术架构的年代是非常适合的。这种集中式的技术架构结构相对简单，显然需要更加稳妥运维操作，毕竟所有鸡蛋都放在这几个篮子里面；另外，在这种集中式的架构下面，业务变更也没有如此的频繁，需要动不动就走一个流程是有点麻烦，但是由于频率低，倒也可以接受。</p>
+<p>现在的我们公司采用的就是ITIL这种模式。有没有发现Tone等系统都是朝着流程化的方向开发的，有没有想过如果支付出现了一个漏洞，虽然两行代码就能够修复。但是用Tone把这一套流程走完需要多次时间？那时候恐怕钱早就被羊毛党撸光了吧。</p>
+<p>这套流程之所以还能正常运行，是因为我们公司的业务量还没有到达哪种<em>你不去改变就会死掉的情况</em>。据我所知，阿里就出现过至少两次这样的技术危机。</p>
+<p><strong>一次是阿里发现自己赚的钱大部分都用来买服务器与服务授权了，于是就有了去IOE运动，拥抱开源。</strong></p>
+<p><strong>第二次是发现自己的服务器规模已超出开源软件（openstack）的最大处理能力，于是就有了阿里云。</strong></p>
+<p>我们设想一下，如果新浪还是采用之前的流程优先的方式，可想而知下面的员工有加不完的班，开不完的故障会议，扣不完的故障分。</p>
+<p>我曾经入职的一家公司，运维部门主管就是一直强调流程化。可是到我离开时，都是故障不断，底下的运维人员也是苦不堪言。那个主管还在每天嘀咕，**明明这种管理方式，之前运行的挺完美的，到底是哪里出现了问题？**还是在抓流程，还是在抓文档。下面的运维人员每天的工作就是编写文档、走流程。公司里面的效率其慢无比，运维人员的水平也就止步于重启、重启、再重启。他们指导规范是ISO20000，有两位专职人员做这份工作，感兴趣的小伙伴可以去研究一下。</p>
+<h2 id="k8s的-hello-world">K8s的 Hello World</h2>
+<p>扯远了，我们继续回来。根据惯例，我们看一下K8s的”hello world”，最简单的K8s示例，<strong>创建副本数为2的nginx应用</strong>。</p>
+<p>如果是自己 DIY 的话，可能需要启动两台虚拟机，分别安装两个 Nginx，然后使用 keepalived 为这两个虚拟机做一个虚拟 IP。</p>
+<p>而如果使用 K8s 项目呢？你需要做的则是编写如下这样一个 YAML 文件（比如名叫 nginx-deployment.yaml）：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: test
+  labels:
+    app: nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+</code></pre></div><p>然后执行一下命令：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$ kubectl create -f nginx-deployment.yaml
+</code></pre></div><p><strong>如果我们想扩容一下这个应用，增加到10个节点</strong></p>
+<ol>
+<li>修改上面的YAML文件，将 <code>replicas: 2</code>修改成<code> replicas: 10</code></li>
+<li>执行<code>  kubectl apply -f nginx-deployment.yaml</code></li>
+</ol>
+<p><strong>我们想要升级一下nginx，升级到指定版本nginx:v1.7</strong></p>
+<ol>
+<li>修改上面的YAML文件，将<code>image: nginx</code>修改成<code>image: nginx:v1.7</code></li>
+<li>执行<code>kubectl apply -f nginx-deployment.yaml</code></li>
+</ol>
+<p><strong>应用下线，我们需要回收资源</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$ kubectl delete -f nginx-deployment.yaml
+</code></pre></div><p>我们发现，用三个命令，就能够很方便的操作K8s来实现之前复杂且繁琐的应用管理了。</p>
+<p><strong>创建资源</strong> kubectl create -f &lt;filename.yaml&gt;</p>
+<p><strong>资源变更</strong> kubectl apply -f  &lt;filename.yaml&gt;</p>
+<p><strong>删除资源</strong> kubectl delete -f &lt;filename.yaml&gt;</p>
+<p>你只要把你的应用架构描述清楚就可以了，剩下的活交给K8s。真正做到了<strong>you say what is what</strong>（你说什么就是什么）。这种操作方式，称之为<strong>声明式API</strong>。但是最最关键的是，<strong>你需要把你的应用架构描述清楚</strong>。</p>
+<h2 id="这是怎么实现的">这是怎么实现的</h2>
+<p>刚刚的演示，是不是很神奇，你们有没有思考过，k8s背后是怎样实现的？</p>
+<p>其实它背后的原理非常简单，我们可以用一段伪代码来描述：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">for {
+  实际状态 := 获取集群中对象的实际状态
+  期望状态 := 获取集群中对象的期望状态
+  if 实际状态 == 期望状态{
+    什么都不做
+  } else {
+    执行编排动作，将实际状态调整为期望状态
+  }
+}
+</code></pre></div><p><strong>在具体实现中，实际状态往往来自于 K8s 集群本身</strong>。</p>
+<p>比如，kubelet 通过心跳汇报的容器状态和节点状态，或者监控系统中保存的应用监控数据，或者控制器主动收集的它自己感兴趣的信息，这些都是常见的实际状态的来源。</p>
+<p><strong>而期望状态，一般来自于用户提交的 YAML 文件</strong>。</p>
+<p>比如，Deployment 对象中 Replicas 字段的值。很明显，这些信息往往都保存在 Etcd 中。</p>
+<p><em>K8s里面所有的控制器，基本上都是采用这样的控制的原理，虽然原理简单，但是实现起来确非常复杂。</em></p>
+<h2 id="kubernetes-这个名字起挺欠揍的">Kubernetes 这个名字起挺欠揍的</h2>
+<p>Kubernetes 这个词是&quot;舵手&quot;的希腊语，你会疑问怎么起了一个这么奇怪的名字。说到云计算领域，不得不提的就是之前dotCloud公司的Docker。</p>
+<p>Docker 这个项目的英文含义是<strong>码头工人</strong>，它对外宣传的一个隐喻是<strong>集装箱</strong>，它的图标是<strong>一条蓝鲸驮着很多集装箱，在大海上航行</strong>，公司的口号是**Build，Ship，and Run Any App，Anywhere（打包镜像，发布镜像，运行任意应用，任意环境运行）**这无疑给使用者一个暗示：&ldquo;快来用吧！用了Docker，就像世界上出现了集装箱，这样你的业务就可以随意、无拘无束的运行在任何地方&rdquo;。</p>
+<p>Docker做的了上面口号的内容，并且取得巨大的成功。那么Docker成功的关键是什么？</p>
+<blockquote>
+<p>Docker其实是提供了一种非常便利的打包机制。这种机制直接打包了应用运行所需要的整个操作系统，从而保证了本地环境和云端环境的高度一致，避免了用户通过“试错”来匹配两种不同运行环境之间差异的痛苦过程。</p>
+</blockquote>
+<p>Docker 根本上解决了本地开发环境与线上环境不一致的问题。做运维的是不是经常听到开发这样说：&ldquo;我的程序没问题啊，本地运行的好好的，肯定是你环境的问题&rdquo;。运维也不再去做繁琐的环境配置的工作了，要知道，如果把公司的服务器操作系统升级是一件非常困难的工程。Docker的出现就像发明了集装箱，再也不需要码头工人进行肩扛背驮的装卸货物了，一切都可以用塔吊全自动的完成。</p>
+<p>Docker 借用了一个真实世界中已经成熟的体系—<strong>全球物流系统</strong>，来映射Docker在软件领域中起到的作用，Docker项目的成功，让doCloud公司发展得如日中天，后来dotCloud公司干脆改名Docker公司，在2014年底，还对外发布了自家研发的&quot;容器集群管理项目Swarm&rdquo;。仿佛自己就是这场变革中（对照集装箱改变世界格局）的带头大哥。本来的确是容器技术领域的领军人物，可惜在有一个项目开源了，它就是K8s。</p>
+<p>同样是2014年，Google开源了Kubernetes，并起了一个<strong>舵手</strong>的名字，<strong>对不起，大航海时代的航行方向，依然还是我说了算</strong>（大海航行靠舵手嘛）。并且K8s的图标，像一个舵，也像一张网，<strong>你的图标不是蓝鲸吗，对不起，最后还是逃脱不了被网住的命运</strong>。</p>
+<p>后来Docker宣布将项目Docker项目改名为Moby(取白鲸之意，图标也是白鲸)完全交由社区维护，放弃Swarm的项目，并宣布在自己的产品中内置K8s，这场纷争到此才尘埃落定。其中的故事很精彩，感兴趣的小伙伴可以私下里去了解一番。</p>
+<p>可以看出，一些大公司在项目起名的时候，都是很&quot;讲究&quot;的，首先要从气势上压倒对方。有一款非常著名的IDE叫做eclipse，学JAVA的小伙伴肯定知道。</p>
+<p>知道为什么要取eclipse这个名字吗？</p>
+<p>JAVA不是由SUN公司开源的嘛？你公司不就叫太阳吗，IBM就故意把这个项目取名eclipse，含义是<strong>日食</strong>—<strong>月亮挡住了太阳，于是太阳失去了光芒</strong>。这好像一个诅咒，后来SUN公司果然失去了光芒，被Oracle收购了。</p>
+<p>这好像是两个小孩子之间的争执，一个小孩子说：&ldquo;我是奥特曼&rdquo;，另外一个小孩子回:&ldquo;我是奥特曼的爸爸&rdquo;。可能在小孩子的世界里，爸爸这个物种真的是一个不可超越的存在。</p>
+<p>为什么K8s胆敢说自己是各个容器编排系统的爸爸呢？我会在下个小节去介绍。我们接下说一下项目取名字的话题。</p>
+<p>有Docker与K8s这两个项目在前，容器领域里的很多著名项目都与<strong>大航海</strong>有点关系，比如做镜像管理的Harbor，它的意思是<strong>灯塔</strong>。做容器应用包管理的Helm，它的意思是<strong>舵</strong>。它的后端Tiller，它的意思是<strong>舵柄</strong>。它的文件格式Chart，意思是<strong>航海图</strong>，（这个就非常形象了，有了航海图，船只便不易搁浅了。这个会在后面详细介绍）也就是这些项目构成了新的大航海时代。</p>
+<p>如果有可能，我也希望给公司的容器云项目也取一个类似的名字。</p>
+<h2 id="k8s-歌者般的存在">K8s 歌者般的存在</h2>
+<p>为什么开源不到4年时间，K8s就成为了容器编排领域的最强者呢？</p>
+<p>我想起初中政治的一个送分题目，为什么社会主义一定能战胜资本主义？</p>
+<p>标准答案是：社会主义制度的优越性强于资本主义balabala(大误)</p>
+<p><img src="https://static001.geekbang.org/resource/image/c7/bd/c7ed0043465bccff2efc1a1257e970bd.png" alt="img"></p>
+<p>上面这幅图，来自于 Google Omega 论文的第一作者的博士毕业论文。它描绘了当时 Google 已经公开发表的整个基础设施栈。在这个图里，你既可以找到 MapReduce、BigTable 等知名项目，也能看到 Borg 和它的继任者 Omega 位于整个技术栈的最底层。</p>
+<p>Borg 系统，一直以来都被誉为 Google 公司内部最强大的“秘密武器”。每个谷歌员工都签署过保密协议，禁止对外透露Borg的任何消息。Borg 可以说是 Google 最不可能开源的一个项目，谁能料想到B站（Bilibili）能够开源它全部的后端代码（大误）？</p>
+<p>Google 公司也在 2015 年 4 月公开的 Borg 论文。k8s项目就是在 Borg 理论的指导下，发展出来的。在它的成长阶段，这个项目每一个核心特征的提出，几乎都脱胎于Borg/Omega 系统的设计与经验，把Borg 团队过去在大规模作业管理与编排上的经验直接“套”在 K8s 项目上了。更重要的是，这些特性在开源社区落地的过程中，又在整个社区的合力之下得到了极大的改进，修复了很多当年遗留在 Borg 体系中的缺陷和问题。项目开源以来，就迅速吸引了全球近2000多个贡献者，可以说这是全球众多知名互联网公司（包含京东、阿里等），众多优秀的技术人员共同智慧的结晶。顺便提一下，上一个这样的项目还是linux。</p>
+<p>可以这样说，K8s是一个经受过大规模作业管理与大的流量考验过的项目。据我所知，京东的之前开发过一版容器管理系统，后来摒弃，换成基于K8s进行开发，而且也为K8s项目提交了很多repo。我认为K8s成功的最根本的原因，我认为还是其设计理念的先进性。设计者肯定看了不少马克思的书籍(大误)。</p>
+<p>之前提到新浪微博的混合云（DCP）是基于Swarm进行二次封装，研发出调度适配层Roam，（详见<a href="https://www.infoq.cn/article/sina-weibo-hybrid-cloud-architecture-flexible-scheduling">新浪微博混合云架构实践挑战之弹性调度揭秘</a>）正是这套架构承受住了来自于8星轨的流量打击（十分钟内迅速自动扩容1000个节点）。虽然没有比较，我相信K8s表现力并不输给新浪微博的混合云(DCP)。</p>
+<p>当时在接触K8s这个项目的时候，感觉K8s真的不是我们这个时代的产品。当一些公司还在开发APM、监控平台要在故障发生后，想要做到快速定位并响应的时候。K8s已经做到了应用的自动编排、自愈与自动化运维。</p>
+<p>这两种的追求真的有很大的区别。第一种的追求迅速定位故障，而第二中追求的是提供完全稳定的服务。就像一家公司追求提供更好的售后服务的时候，另外一家公司已经做到，<strong>没有售后的服务就是最好的服务</strong>。就好比当印度还在开发导弹的时候，中国直接把核武器的设计与核武器公开了，任何人都可以随便用。</p>
+<p>当地球文明跟三体文明还在争夺小破球(地球)的时候，歌者文明默默地向他们扔来了一片二向箔。</p>
+<h2 id="深度解密原来你是这样的k8s">深度解密，原来你是这样的K8s</h2>
+<p><img src="https://static001.geekbang.org/resource/image/8e/67/8ee9f2fa987eccb490cfaa91c6484f67.png" alt="img"></p>
+<p>我们可以看到，Kubernetes 项目的架构，跟它的原型项目 Borg 非常类似，都由 Master 和 Node 两种节点组成，而这两种角色分别对应着控制节点和计算节点。</p>
+<p>其中，控制节点，即 Master 节点，由三个紧密协作的独立组件组合而成，它们分别是:</p>
+<ol>
+<li><strong>kube-apiserver</strong>  负责 API 服务，是总协调中心，所有的组件都只和apiserver交互。</li>
+<li><strong>kube-scheduler</strong>  负责调度，简单理解就是把某个容器分配到哪个机器上运行。</li>
+<li><strong>kube-controller-manager</strong> 责容器编排。编排这个词语很难解释清楚，举个例子来说吧，之前的控制应用自动扩容缩容的动作就是这个组件去做的。</li>
+</ol>
+<p>整个集群的持久化数据，则由 kube-apiserver 处理后保存在<strong>Etcd</strong> 中。</p>
+<p>而计算节点上最核心的部分，则是一个叫作<strong>kubelet</strong> 的组件，那么它每天主要工作内容是什么呢？</p>
+<ol>
+<li>与容器运行时(Docker)打交道，例如创建容器，销毁容器等。</li>
+<li>调用网络插件和存储插件为容器配置网络和持久化存储。</li>
+<li>其它的一些别的工作。</li>
+</ol>
+<p>这里多提一句，K8s也是<strong>面向接口编程而不是面向实现编程</strong>，这些接口规范包含CRI（Container Runtime Interface）、 CNI（Container Networking Interface）、CSI（Container Storage Interface）等。</p>
+<p>从这可以看出，K8s并不仅仅是编排Docker，你完全可以把Docker换成别的容器运行时工具，比如CoreOS出品的容器管理工具rkt，甚至是与容器技术原理不一致的超轻量型虚拟机Kata。</p>
+<p>相类似的，K8s也支持多种方式网络配置（插件）与多种类型的存储（插件）。</p>
+<p>这样看来是不是感觉K8s的架构是不是超级简单了。接下来我们就把之前的那个&quot;Hello World&quot;的过程演绎一遍。</p>
+<blockquote>
+<ol>
+<li>Kubectl 发送部署信息到<strong>kube-apiserver</strong>。</li>
+<li><strong>kube-apiserver</strong> 通知<strong>controller-manager</strong> 创建一个的Deployment对象。</li>
+<li>这个Deployment对象，执行上面的那段伪代码，发现现在集群中没有满足需求的对象，而你的需求是5个对象。</li>
+<li>然后这个Deployment对象调用<strong>kube-apiserver</strong>创建了5个Pod对象(其实就是在Etcd里面新增了5条记录)。</li>
+<li>这时<strong>kube-scheduler</strong>来询问<strong>kube-apiserver</strong>,还有没有需要调度的Pod，恰恰好，有5个新建的Pod。</li>
+<li>然后<strong>kube-scheduler</strong>执行调度工作，它先把所有的Node节点做了一下比较，然后从其中选出来几个机器，把这5个Pod绑定到这几个Node节点（Pod的对象的node字段赋值机器的ip）。</li>
+<li>调度完成后，<strong>kube-scheduler</strong>又把调度方案告诉了<strong>kube-apiserver</strong>，<strong>kube-apiserver</strong>暂存到Etcd中。</li>
+<li>各个<strong>kubelet</strong>发来心跳信息，顺便问问自己有没有新的任务。</li>
+<li>收到新的任务的Node节点(就是刚刚的那几个机器)，执行创建容器的操作。</li>
+<li>创建完成后，又把结果告诉了<strong>kube-apiserver</strong>，至此整个过程完成。</li>
+</ol>
+</blockquote>
+<p>可以看出各个组件各负其职、相互配合的完成了所谓的编排工作。这大体上就是K8s的工作流程了。看来整个过程算是顺畅的，是不是发出了**K8s也不过如此啊！**这样的感叹。</p>
+<h2 id="用编程的方式去编排应用">用编程的方式去编排应用</h2>
+<p>K8s的门槛其实并不低，今天的分享也不是单纯技术分享。没有人能从几次分享中，看几篇介绍性的文章中学会一门技术。K8s中的每一个细节都能讲上很长时间。</p>
+<p>上面的那个例子，对应到真实世界中，其实就是两台装了Nginx的机器。可以说毫无作用，它没有任何依赖、没有写盘落库、甚至也不能访问(你无法直接访问到生产环境中的机器，因为网络隔离)。而现实中的架构可能比这复杂几百倍。有很多需要考虑的细节、主从、有状态应用、应用的依赖问题。</p>
+<p>可以看一下真正用于生产的yaml文件。</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">cp3ppsystem-001.yaml 
+grafana.yaml        
+prometheus.yaml
+</code></pre></div><p>如果用JAVA语言做比喻的话，K8s平台本身相当于JVM，你的应用可以运行在其中。而kubectl命令相当于java命令，可以运行你的程序。<strong>而这些yaml文件就相当于你写的代码</strong>，是整个应用架构的基因。</p>
+<p>你的程序需要不断升级，可能会出现bug。同理整个应用架构也会不断变化，也会出现不合理问题，需要不断的优化。程序需要变化的时候需要改代码，同理架构需要变化的时候，也只需要修改yaml文件。修改完执行一句：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kubectl apply 你的应用.yaml
+</code></pre></div><p>JAVA语言里的类试图描述的是现实世界中的对象。同样K8s也给出了系列的编排对象用于描述应用的架构。</p>
+<blockquote>
+<ul>
+<li>
+<p>Pod 容器组，作用是多个容器协同调度。可以对应到虚拟机的概念。</p>
+</li>
+<li>
+<p>Deployment ，控制应用的生命周期，用于应用的扩容、缩容、回滚、升级等操作。</p>
+</li>
+<li>
+<p>Service 服务，定义了一个服务，可以对应到虚拟IP这个概念。</p>
+</li>
+<li>
+<p>Ingress 为服务提供集群外访问，对应到Nginx代理。</p>
+</li>
+<li>
+<p>volume  存储卷</p>
+</li>
+<li>
+<p>StatefulSets 用于描述有状态服务</p>
+</li>
+<li>
+<p>DaemonSet 用于每个工作节点只运行一个的应用，比如说zabbix_agent、filebeat等每个机器上只能运行一个实例的应用。</p>
+</li>
+<li>
+<p>Jobs 运行一次的任务</p>
+</li>
+<li>
+<p>CronJob 周期运行的任务</p>
+</li>
+</ul>
+</blockquote>
+<p>等等正是提供了这些编排对象，你可以像编程的方式，去编写你的架构。无论你的应用多么复杂，无论变更多少，只需要执行一句：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kubectl apply 你的应用.yaml
+</code></pre></div><p>它就会自动调整到你期望的状态。再也不会出错。</p>
+<p>你们有没有发现，k8s这种&quot;编程语言&quot;也是面向对象，而不是面向过程的。你不需要告诉K8s，你应该去怎样创建容器，怎么去分配IP，怎么去做。你只把你想象的架构描述一下就可以了。</p>
+<p>所以说，K8s的门槛其实蛮高的，你要把这些东西描述好，需要去学习K8s这种语言，需要深入去了解K8s实现细节、需要懂架构、需要懂存储、需要会配置网络策略。</p>
+<p>这就解释了，为什么K8s开源这么长时间，这么好用的一个平台。现在只有一些一线互联网公司才能用好它。</p>
+<p>现在理解为什么k8是自动化的吗？你就当它是你编写的程序行了。</p>
+<h2 id="我是谁我从哪里来将到哪里去">我是谁？我从哪里来？将到哪里去？</h2>
+<p>谁能回答这个困扰人类几千年的哲学问题：</p>
+<p><strong>我是谁？我从哪里来？将到哪里去？</strong></p>
+<p>其实很多时候，我们编程就是在回答一些问题？举个例子来讲，开发权限管理系统是在解答那个问题？RBAC？</p>
+<p>其实权限管理最根本的一个问题是：</p>
+<blockquote>
+<p><strong>谁</strong>在某些<strong>条件</strong>下<strong>能否</strong>对某些<strong>资源</strong>做某种<strong>操作</strong></p>
+</blockquote>
+<ul>
+<li>&ldquo;谁&rdquo; 是指的发起的主题，可以是一个用户，也可以是一个系统</li>
+<li>&ldquo;条件&quot;是主题具备的条件，例如：自身的IP地址、是否owner、访问时间、等等任意可能的条件。</li>
+<li>&ldquo;能否&quot;就是结果，只有两种，通过与禁止。</li>
+<li>&ldquo;资源&rdquo; 就是你要保护的东西，可以是文件，也可以是某些对象例如服务器。</li>
+<li>&ldquo;操作&rdquo; 就是对资源的操作，比如删除、访问、更改、重启等。</li>
+</ul>
+<p>RBAC回答了这个问题了没有？</p>
+<p>没有，RBAC只回答了<strong>谁在某个角色的情况下，能不能对某个资源做某个操作</strong></p>
+<p>如果一个抢购需要控制8点后才能开始，RBAC就很难做到。</p>
+<p>如果限制某些IP、限制应用只有owner才能访问，而且这些控制条件随时都可能变化，比如我们需要应用的B角也能拥有owner，只需要简单修改配置就能做到修改，而不需要修改业务代码。</p>
+<p>这个权限控制系统，如果让你去设计，你会怎么去设计？</p>
+<p>我认为最关键的关键就是：你能不能回答好上面提出的那个问题。</p>
+<p>当然我们今天不会去深入思考权限系统的设计，这次分享的主题是容器云。</p>
+<p>而容器云设计最根本的问题是什么？我认为就是以下这三个问题：</p>
+<p><strong>这些yaml文件该由谁去创建？</strong></p>
+<p><strong>这些yaml文件应该怎么去创建？</strong></p>
+<p><strong>如果前两个都没有问题，那么怎么去管理好这些yaml文件？</strong></p>
+<p>毕竟这些yaml文件就是你应用架构的DNA，你如果获取到了应用架构的DNA，那么对架构的操作就很简单了，还是那条命令:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kubectl apply 你的应用.yaml
+</code></pre></div><p>我会在下周的分享中，去尝试回答这三个问题，并简单分享一下容器云的设计。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">子不语</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-09-09
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/2019/06/%E6%B5%85%E8%B0%88%E5%AE%B9%E5%99%A8%E4%BA%91%E8%AE%BE%E8%AE%A1/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">浅谈容器云设计</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/2019/01/golang-%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E9%80%9F%E6%9F%A5/">
+            <span class="next-text nav-default">Golang 交叉编译速查</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:hi@gitblog.me" class="iconfont icon-email" title="email"></a>
+  <a href="http://localhost:1313/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">子不语</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.d7b7ada643c9c1a983026e177f141f7363b4640d619caf01d8831a6718cd44ea.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

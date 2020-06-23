@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>编写 Dockerfile 的最佳实践 - Flow</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="子不语" /><meta name="description" content="Docker 能使用 Dockerfile 文件自动化编译镜像。Dockerfile 是一个文本文件，由指令集组成。 一般准则和建议 容器应该是短暂的 Dockerfile 产生的容器，应该是尽可能短暂" /><meta name="keywords" content="gitblog, blog, gitblog.me" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.72.0 with theme even" />
+
+
+<link rel="canonical" href="http://localhost:1313/2019/12/%E7%BC%96%E5%86%99-dockerfile-%E7%9A%84%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.78f8f17bab244b9ee62ad16480c9584d5fc2db06ae20681d1ca225cefd80767c.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="编写 Dockerfile 的最佳实践" />
+<meta property="og:description" content="Docker 能使用 Dockerfile 文件自动化编译镜像。Dockerfile 是一个文本文件，由指令集组成。 一般准则和建议 容器应该是短暂的 Dockerfile 产生的容器，应该是尽可能短暂" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/2019/12/%E7%BC%96%E5%86%99-dockerfile-%E7%9A%84%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" />
+<meta property="article:published_time" content="2019-12-13T14:36:56+08:00" />
+<meta property="article:modified_time" content="2019-12-13T14:36:56+08:00" />
+<meta itemprop="name" content="编写 Dockerfile 的最佳实践">
+<meta itemprop="description" content="Docker 能使用 Dockerfile 文件自动化编译镜像。Dockerfile 是一个文本文件，由指令集组成。 一般准则和建议 容器应该是短暂的 Dockerfile 产生的容器，应该是尽可能短暂">
+<meta itemprop="datePublished" content="2019-12-13T14:36:56&#43;08:00" />
+<meta itemprop="dateModified" content="2019-12-13T14:36:56&#43;08:00" />
+<meta itemprop="wordCount" content="2104">
+
+
+
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="编写 Dockerfile 的最佳实践"/>
+<meta name="twitter:description" content="Docker 能使用 Dockerfile 文件自动化编译镜像。Dockerfile 是一个文本文件，由指令集组成。 一般准则和建议 容器应该是短暂的 Dockerfile 产生的容器，应该是尽可能短暂"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Flow</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">首页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">Flow</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">首页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">编写 Dockerfile 的最佳实践</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-12-13 </span>
+        
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#一般准则和建议">一般准则和建议</a>
+      <ul>
+        <li><a href="#容器应该是短暂的">容器应该是短暂的</a></li>
+        <li><a href="#使用一个-dockerfile-文件">使用一个 .dockerfile 文件</a></li>
+        <li><a href="#避免安装不必要的包">避免安装不必要的包</a></li>
+        <li><a href="#每个容器只运行一个进程">每个容器只运行一个进程</a></li>
+        <li><a href="#最小化层数">最小化层数</a></li>
+        <li><a href="#让指令更漂亮">让指令更漂亮</a></li>
+        <li><a href="#编译缓存">编译缓存</a></li>
+      </ul>
+    </li>
+    <li><a href="#指令集">指令集</a>
+      <ul>
+        <li><a href="#from">FROM</a></li>
+        <li><a href="#run">RUN</a></li>
+        <li><a href="#apt-get">apt-get</a></li>
+        <li><a href="#cmd">CMD</a></li>
+        <li><a href="#expose">EXPOSE</a></li>
+        <li><a href="#env">ENV</a></li>
+        <li><a href="#add-copy">ADD &amp;COPY</a></li>
+        <li><a href="#entrypoint">ENTRYPOINT</a></li>
+        <li><a href="#volume">VOLUME</a></li>
+        <li><a href="#user">USER</a></li>
+        <li><a href="#workdir">WORKDIR</a></li>
+        <li><a href="#onbuild">ONBUILD</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p>Docker 能使用 Dockerfile 文件自动化编译镜像。Dockerfile 是一个文本文件，由指令集组成。</p>
+<h2 id="一般准则和建议">一般准则和建议</h2>
+<h3 id="容器应该是短暂的">容器应该是短暂的</h3>
+<p>Dockerfile 产生的容器，应该是尽可能短暂的。“短暂”，意味着可以停止、销毁、重新制作一个新的。</p>
+<h3 id="使用一个-dockerfile-文件">使用一个 .dockerfile 文件</h3>
+<p>大多数情况下，你都应该有一个 .dockerfile 文件，它非常类似 <code>.gitignore</code> 文件。</p>
+<h3 id="避免安装不必要的包">避免安装不必要的包</h3>
+<p>为了减少复杂度、依赖性、文件大小和创建时间，你应该避免安装额外的或不必要的软件包。比如，不需要在一个数据镜像中安装一个文本编辑器。</p>
+<h3 id="每个容器只运行一个进程">每个容器只运行一个进程</h3>
+<p>大多数情况下，你应该在一个容器中只运行一个进程。在多个容器中解耦，可以更容易的水平伸缩和重用容器。</p>
+<h3 id="最小化层数">最小化层数</h3>
+<p>你需要在可读性和最小化层数之间作出平衡。在战略上要小心镜像的层数。</p>
+<h3 id="让指令更漂亮">让指令更漂亮</h3>
+<p>可能的话，把长的指令分成多行：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">RUN apt-get update &amp;&amp; apt-get install -y \
+  bzr \
+  cvs \
+  git \
+  mercurial \
+  subversion
+</code></pre></div><h3 id="编译缓存">编译缓存</h3>
+<p>编译的过程中，Docker 会按照 Dockerfile 文件的指令一步一步的前进。每一条指令，Docker 都会先查找一下当前缓存中有没有已有的镜像，而不是创建一个新镜像。如果你不想使用缓存，<code>docker build</code> 时指定 <code>--no-cache=true</code> 。</p>
+<p>如果允许 Docker 使用镜像缓存，那么理解编译过程是非常重要的：</p>
+<ul>
+<li>从基础镜像开始后，下一条指令会检查当前缓存中是否有使用同一个基础镜像的，如果有就用该层镜像。如果没有，缓存被视为无效。</li>
+<li>大多数情况下，比较 Dockerfile 的指令足够。然而，一些特定指令需要额外的解释。</li>
+<li><code>ADD</code> 和 <code>COPY</code> 指令，会为每个文件计算校验和。最后修改时间和最后访问时间不被计入比较之内。在整个查找过程，校验和会和已有文件的校验和进行比较。如果没有匹配的文件，那么缓存被视为无效。</li>
+<li>除了 <code>ADD</code> 和 <code>COPY</code> 指令，缓存检查不会比较文件。比如：<code>RUN apt-get -y update</code> 不会比较文件是否相当，而只是比较指令是否相同。</li>
+</ul>
+<p>一旦缓存被视为无效，所有后续的指令都会生成新的镜像。</p>
+<h2 id="指令集">指令集</h2>
+<h3 id="from">FROM</h3>
+<p>可能的话，使用当前官方仓库提供的镜像。我们推荐 <a href="https://registry.hub.docker.com/_/debian/">Debian image</a>，因为它非常轻量（当前 <code>100MB</code>），并且长期处于维护中。</p>
+<h3 id="run">RUN</h3>
+<p>总是使 Dockerfile 更可读，更易于维护。把长的指令分成多行。</p>
+<h3 id="apt-get">apt-get</h3>
+<p>最常用的安装命令可能就是 <code>apt-get</code> 了。</p>
+<p>避免 <code>RUN apt-get upgrade</code> 或 <code>dist-upgrade</code>，因为许多包不会在非特权容器中升级。如果想要升级一个包，使用 <code>RUN apt-get update &amp;&amp; apt-get install -y foo</code> 自动更新。</p>
+<p>总是把 <code>RUN apt-get update</code> 和 <code>apt-get install</code> 写在一条 <code>RUN</code> 指令，这样能确保不会因为缓存导致不进行 <code>update</code> 而 <code>install</code>：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">RUN apt-get update &amp;&amp; apt-get install -y \
+    package-bar \
+    package-baz \
+    package-foo
+</code></pre></div><p>指定一个包的版本，可以强制编译忽略此处的缓存：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">RUN apt-get update &amp;&amp; apt-get install -y \
+    package-bar \
+    package-baz \
+    package-foo=1.3.*
+</code></pre></div><p>下面是一个非常良好的 <code>RUN</code> 示范：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">RUN apt-get update &amp;&amp; apt-get install -y \
+    aufs-tools \
+    automake \
+    build-essential \
+    curl \
+    dpkg-sig \
+    libcap-dev \
+    libsqlite3-dev \
+    mercurial \
+    reprepro \
+    ruby1.9.1 \
+    ruby1.9.1-dev \
+    s3cmd=1.1.* \
+ &amp;&amp; rm -rf /var/lib/apt/lists/*
+</code></pre></div><h3 id="cmd">CMD</h3>
+<p><code>CMD</code> 应该用来运行镜像中的软件。尽可能使用这种格式：<code>CMD [“executable”, “param1”, “param2”…]</code>。比如 <code>CMD [&quot;apache2&quot;,&quot;-DFOREGROUND&quot;]</code>。</p>
+<p>大多数情况下，<code>CMD</code> 应该给出一个内部 Shell （bash、python、perl、&hellip;）。比如 <code>CMD [&quot;perl&quot;, &quot;-de0&quot;]</code>、<code>CMD [&quot;python&quot;]</code>。</p>
+<h3 id="expose">EXPOSE</h3>
+<p><code>EXPOSE</code> 指令标示容器想要监听的端口。因此，你应该为你的应用程序使用通用的、传统的端口。比如，一个镜像，内含一个 Apache Web Server，会需要使用 <code>EXPOSE 80</code>；一个基于 MongoDB 的镜像则需要 <code>EXPOSE 27017</code>。</p>
+<h3 id="env">ENV</h3>
+<p>为了使新软件更容易运行，你可以使用 <code>ENV</code> 更新容器内的 <code>PATH</code> 环境变量。比如 <code>ENV PATH /usr/local/nginx/bin:$PATH</code> 可以确保 <code>CMD [“nginx”]</code> 工作。</p>
+<p><code>ENV</code> 对于容器提供的服务也很有帮助，比如 Postgres 所需要的 <code>PGDATA</code> 环境变量。</p>
+<p>最后，<code>ENV</code> 也能用来设定通用的版本号：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ENV PG_MAJOR 9.3
+ENV PG_VERSION 9.3.4
+RUN curl -SL http://example.com/postgres-$PG_VERSION.tar.xz | tar -xJC /usr/src/postgress &amp;&amp; …
+ENV PATH /usr/local/postgres-$PG_MAJOR/bin:$PATH
+</code></pre></div><h3 id="add-copy">ADD &amp;COPY</h3>
+<p>尽管 <code>ADD</code>、<code>COPY</code> 功能非常相似，仍然推荐首先 <code>COPY</code> &mdash; 它比 <code>ADD</code> 更透明。<code>COPY</code> 只会拷贝文件，<code>ADD</code> 则有一些额外功能（比如 tar 包解压缩、远程 URL 支持）。使用 <code>ADD</code> 最常用的情况是解压 tar 包：<code>ADD rootfs.tar.xz /</code>。</p>
+<p>如果 Dockerfile 需要多个不同文件，分开 <code>COPY</code> 它们，而不是一次性 <code>COPY</code>。这能利用编译缓存节省空间：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">COPY requirements.txt /tmp/
+RUN  pip install --requirement /tmp/requirements.txt
+COPY . /tmp/
+</code></pre></div><p>因为镜像尺寸的问题，使用 <code>ADD</code> 请求远程 URL 非常受挫。你应该使用 <code>curl</code> 或 <code>wget</code> 来完成这个任务，而不是用 <code>ADD</code>。比如下面的例子非常不推荐：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ADD http://example.com/big.tar.xz /usr/src/things/
+RUN tar -xJf /usr/src/things/big.tar.xz -C /usr/src/things
+RUN make -C /usr/src/things all
+</code></pre></div><p>应该使用下面的方法：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">RUN  mkdir -p /usr/src/things \
+  &amp;&amp; curl -SL http://example.com/big.tar.xz \
+  |  tar -xJC /usr/src/things \
+  &amp;&amp; make -C /usr/src/things all
+</code></pre></div><h3 id="entrypoint">ENTRYPOINT</h3>
+<p><code>ENTRYPOINT</code> 最好用来设置镜像的主命令。</p>
+<p>下面这个例子运行一个 <code>s3cmd</code> 工具：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ENTRYPOINT [&#34;s3cmd&#34;]
+CMD [&#34;--help&#34;]
+</code></pre></div><p>现在，可以这样运行容器：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$ docker run s3cmd
+</code></pre></div><p>也可以这样运行：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$ docker run s3cmd ls s3://mybucket
+</code></pre></div><p><code>ENTRYPOINT</code> 也能用来组合一个帮助脚本。比如 <a href="https://registry.hub.docker.com/_/postgres/">Postgres Official Image</a> 使用了下面的脚本：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/bash
+</span><span class="cp"></span><span class="nb">set</span> -e
+
+<span class="k">if</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span> <span class="o">=</span> <span class="s1">&#39;postgres&#39;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+    chown -R postgres <span class="s2">&#34;</span><span class="nv">$PGDATA</span><span class="s2">&#34;</span>
+
+    <span class="k">if</span> <span class="o">[</span> -z <span class="s2">&#34;</span><span class="k">$(</span>ls -A <span class="s2">&#34;</span><span class="nv">$PGDATA</span><span class="s2">&#34;</span><span class="k">)</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+        gosu postgres initdb
+    <span class="k">fi</span>
+
+    <span class="nb">exec</span> gosu postgres <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span>
+<span class="k">fi</span>
+
+<span class="nb">exec</span> <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span>
+</code></pre></div><p>帮助脚本被拷贝进容器，然后通过 <code>ENTRYPOINT</code> 运行：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">COPY ./docker-entrypoint.sh /
+ENTRYPOINT [&#34;/docker-entrypoint.sh&#34;]
+</code></pre></div><p>这条脚本允许用户和 Postgres 交互。</p>
+<h3 id="volume">VOLUME</h3>
+<p><code>VOLUME</code> 指令应该用来暴露数据存储、配置存储、或者容器创建的文件。非常鼓励在用户服务中使用 <code>VOLUME</code>。</p>
+<h3 id="user">USER</h3>
+<p>如果要让一个服务以非特权运行，使用 <code>USER</code> 改变为一个非 root 用户。创建一个用户和组：</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">RUN groupadd -r postgres &amp;&amp; useradd -r -g postgres postgres
+</code></pre></div><blockquote>
+<p>镜像中的 UID 和 GID 是不确定的。如果需要的话，应该在创建用户和组时明确指定 UID、GID。</p>
+</blockquote>
+<p>应该避免安装或使用 <code>sudo</code>，因为存在信号转发的问题，可能引起不可知的问题。如果你确实需要这么做，使用 <code>gosu</code> 代替。</p>
+<h3 id="workdir">WORKDIR</h3>
+<p>为了可读性，应该总是用绝对路径指定 <code>WORKDIR</code>。避免 <code>RUN cd … &amp;&amp; do-something</code> 这样的指令。</p>
+<h3 id="onbuild">ONBUILD</h3>
+<p><code>ONBUILD</code> 指令在 Dockerfile 文件编译完成后触发。</p>
+<h2 id="参考">参考</h2>
+<p><a href="https://docs.docker.com/develop/develop-images/dockerfile_best-practices/">https://docs.docker.com/develop/develop-images/dockerfile_best-practices/</a></p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">子不语</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-12-13
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        
+        <a class="next" href="/2019/11/codecombat%E7%A7%81%E6%9C%8D%E6%90%AD%E5%BB%BA/">
+            <span class="next-text nav-default">Codecombat私服搭建</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:hi@gitblog.me" class="iconfont icon-email" title="email"></a>
+  <a href="http://localhost:1313/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">子不语</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.d7b7ada643c9c1a983026e177f141f7363b4640d619caf01d8831a6718cd44ea.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>
